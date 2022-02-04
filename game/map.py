@@ -242,7 +242,7 @@ class Map:
                                                     camera.scroll,
                                                     multiple_tiles_tiles_flag=True)
                                 self.hud.display_life_bar(screen, building, self, for_hud=False, camera=camera)
-                self.display_building(screen, building, building.owner.color, camera.scroll,
+                self.display_building(screen, building, camera.scroll,
                                       self.grid_to_renderpos(building.pos[0], building.pos[1]), player)
                 if building.current_health < building.max_health:
                     self.hud.display_life_bar(screen, building, self, for_hud=False, camera=camera)
@@ -271,9 +271,9 @@ class Map:
         # temp tile is a dictionary containing name + image + render pos + iso_poly + collision
         # if player is looking for a tile to place a building, we highlight the tested tiles in RED or GREEN if the tile is free or not
         # we display the future building on the tested tile every time
-        for p in player_list:
-            if self.temp_tile is not None:
-                self.display_potential_building(screen, camera, p)
+        #for p in player_list:
+        if self.temp_tile is not None:
+            self.display_potential_building(screen, camera, the_player=MAIN_PLAYER)
 
     def load_images(self):
         block = pygame.image.load(os.path.join(assets_path, "block.png")).convert_alpha()
@@ -504,6 +504,15 @@ class Map:
 
     # here is the fonction that randomly places a player's starting units 4 tiles from the corner
     def place_starting_units(self, the_player=MAIN_PLAYER):
+        """
+
+        Args:
+            the_player: for which player are we placing the town center
+
+        Returns: nothing
+
+        """
+
         townhall_placed = False
 
         while not townhall_placed:
@@ -593,6 +602,17 @@ class Map:
             the_player.pay_entity_cost_bis(Villager)
 
     def remove_entity(self, entity, scroll):
+        """
+        Args:
+            entity: which building/unit must we remove
+            scroll: camera.scroll of map/game
+
+        Returns: nothing
+
+        What is does:
+            remove entity from the map, all lists, and play its death animation
+
+        """
         self.entities.remove(entity)
         if issubclass(type(entity), Building):
             if not issubclass(type(entity), Farm):
@@ -711,6 +731,10 @@ class Map:
         pygame.draw.polygon(screen, color, mask, 3)
 
     def highlight_tile(self, grid_x, grid_y, screen, color, scroll, multiple_tiles_tiles_flag=False):
+        """
+            Dessine le carré de selection autour de la tile passee en paramètres.
+            Lorsque le flag multiple est activé, c'est une tile 2x2 qui est highlighté.
+        """
         # we have to highlight 1 tile
         if not multiple_tiles_tiles_flag:
             iso_poly = self.grid_to_iso_poly(grid_x, grid_y)
@@ -729,9 +753,9 @@ class Map:
         self.display_grid_setting = True if not self.display_grid_setting else False
 
     def draw_minimap(self, screen, camera):
-        '''Draw a minimap so you dont get lost. Moving it to HUD or
+        """Draw a minimap so you dont get lost. Moving it to HUD or
         Camera is highly recommended, draw the polygon once so increase
-        FPS. '''
+        FPS. """
         minimap_scaling = 16
         ### Draw the camera on the map
         ### 420 and 200 is the size of minimap panel
@@ -807,13 +831,6 @@ class Map:
                 resource_tile["grid"][1] == self.examined_tile[1]) \
                     or resource_tile["health"] != resource_tile["max_health"]:
                 self.hud.display_life_bar(screen, resource_tile, self, camera=camera, for_hud=False, for_resource=True)
-        # elif tile_type == "":
-        #   screen.blit(self.hud.resources_sprites["grass"][
-        #                    self.map[resource_tile["grid"][0]][resource_tile["grid"][1]]["variation"]], (
-        #                   render_pos[0] + self.grass_tiles.get_width() / 2 + camera.scroll.x,
-        #                   render_pos[1] - (self.hud.resources_sprites["grass"][
-        #                   self.map[resource_tile["grid"][0]][resource_tile["grid"][1]]["variation"]].get_height() - TILE_SIZE) + camera.scroll.y)
-        #               )
 
     def display_unit(self, unit, screen, camera, render_pos):
         # HERE WE DRAW THE UNITS ON THE MAP
@@ -881,8 +898,8 @@ class Map:
                         future_building_render_pos = self.grid_to_renderpos(future_building["pos"][0],
                                                                             future_building["pos"][1])
                         for p in player_list:
-                            self.display_building(screen, future_building, unit.owner.color, camera.scroll,
-                                                  future_building_render_pos, p,
+                            self.display_building(screen, future_building, camera.scroll,
+                                                  future_building_render_pos, the_player=unit.owner,
                                                   is_hypothetical_building=True, is_build_possibility_display=True)
                 # display unit model
                 if type(unit) == Villager:
@@ -933,10 +950,11 @@ class Map:
                 self.highlight_tile(grid[0], grid[1], screen, "GREEN", camera.scroll)
 
         # display the buildable building on the tile
-        self.display_building(screen, self.temp_tile, the_player.color, camera.scroll, render_pos, the_player,
+        print("color of the guy building", the_player.color)
+        self.display_building(screen, self.temp_tile, camera.scroll, render_pos, the_player=the_player,
                               is_hypothetical_building=True)
 
-    def display_building(self, screen, building, color: str, scroll, render_pos, the_player=MAIN_PLAYER,
+    def display_building(self, screen, building, scroll, render_pos, the_player=MAIN_PLAYER,
                          is_hypothetical_building=False,
                          is_build_possibility_display=False):
         # we either display the building fully constructed or being built ( 4 possible states )
@@ -961,7 +979,6 @@ class Map:
                     offset = (-60, 0)
                 elif isinstance(building, Market):
                     offset = (20, 20)
-
 
                 #general display
                 screen.blit(sprite_to_display, (
@@ -1033,9 +1050,9 @@ class Map:
 
             #if not building["has_construction_started"]:
                 if building["name"] != "Farm":
-                    sprite_to_display = self.hud.first_age_building_sprites[building["name"]][color][the_player.age - 1]
+                    sprite_to_display = self.hud.first_age_building_sprites[building["name"]][the_player.color][the_player.age - 1]
                 else:
-                    sprite_to_display = self.hud.first_age_building_sprites[building["name"]][color]
+                    sprite_to_display = self.hud.first_age_building_sprites[building["name"]][the_player.color]
 
                 if is_build_possibility_display:
                     sprite_to_display = sprite_to_display.copy()

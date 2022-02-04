@@ -64,6 +64,7 @@ class Farm(Building):
         self.name = " Farm"
 
         self.construction_cost = [100, 0, 0, 0]
+        self.armor = 0
 
         self.max_health = 10
         self.max_population_bonus = 0
