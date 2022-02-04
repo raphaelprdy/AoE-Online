@@ -897,8 +897,7 @@ class Map:
                         future_building = unit.building_to_create
                         future_building_render_pos = self.grid_to_renderpos(future_building["pos"][0],
                                                                             future_building["pos"][1])
-                        for p in player_list:
-                            self.display_building(screen, future_building, camera.scroll,
+                        self.display_building(screen, future_building, camera.scroll,
                                                   future_building_render_pos, the_player=unit.owner,
                                                   is_hypothetical_building=True, is_build_possibility_display=True)
                 # display unit model
