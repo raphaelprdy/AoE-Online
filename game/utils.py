@@ -16,7 +16,8 @@ TEST_MODE = False
 IA_MODE = False
 SPEED_OF_GAME = 1
 
-def draw_text(screen, text, size, color, pos):
+
+def draw_text(screen, text: str, size: int, color: (int, int, int), pos: (int, int)):
     # create a Font object from the system fonts
     # SysFont(name, size, bold=False, italic=False)
 
@@ -213,6 +214,7 @@ def look_around(pos, map):
 
     return True if any(list) else False
 
+
 def better_look_around(villager_pos, ressource_pos, map):
     list = []
     if 0 <= ressource_pos[0] + 1 < MAP_SIZE_X and map[ressource_pos[0] + 1][ressource_pos[1]]["tile"] == "" and \
@@ -252,6 +254,7 @@ def is_adjacent_to(pos1, pos2):
         else:
             return False
 
+
 def find_owner(pos):
     for u in GENERAL_UNIT_LIST:
         unit_pos = list(u.pos)
@@ -262,3 +265,54 @@ def find_owner(pos):
         bat_pos= list(b.pos)
         if bat_pos == pos:
             return b.owner
+
+
+# returns the angle between the origin tile and the destination tile. Angle goes from 0 to 360, 0 top, 90 right, etc...
+def get_angle_between(origin_tile_pos: [int, int], end_tile_pos: [int, int]):
+    # first we calculate angle between grid, then we will apply some maths to get the "real" isometric angle
+    # if origin == destination, no calcul
+    angle = 0
+
+    # linear movement : left right ; y the same, x varies
+    if end_tile_pos[1] == origin_tile_pos[1]:
+        # from left to right
+        if end_tile_pos[0] > origin_tile_pos[0]:
+            angle = 90
+        # else from right to left
+        else:
+            angle = 270
+
+    # linear movement : top bottom ; x the same, y varies
+    elif end_tile_pos[0] == origin_tile_pos[0]:
+        # from top to bottom
+        if end_tile_pos[1] > origin_tile_pos[1]:
+            angle = 180
+
+        # else from bottom to top
+        else:
+            angle = 0
+
+    # diagonal movement : top left bottom right ; dx = dy
+    elif end_tile_pos[0] - origin_tile_pos[0] == end_tile_pos[1] - origin_tile_pos[1]:
+        # if going down
+        if end_tile_pos[0] - origin_tile_pos[0] > 0:
+            angle = 135
+
+        # else he is going up
+        else:
+            angle = 315
+
+    # diagonal movement : top right bottom left ; dx = - dy
+    elif end_tile_pos[0] - origin_tile_pos[0] == - (end_tile_pos[1] - origin_tile_pos[1]):
+        # if going towards top right
+        if end_tile_pos[0] - origin_tile_pos[0] > 0:
+            angle = 45
+
+        # else he is going bottom left
+        else:
+            angle = 225
+
+    # transformation to get isometric
+    angle = angle + 45
+
+    return angle

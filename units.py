@@ -7,7 +7,7 @@ from tech import Age_II, Age_III, Age_IV, iron_sword_tech, food_production_tech,
 import pygame
 from math import ceil
 from random import randint
-from game.utils import tile_founding, GENERAL_UNIT_LIST, GENERAL_BUILDING_LIST, UNIT_TYPES, BUILDING_TYPES, SPEED_OF_GAME
+from game.utils import tile_founding, GENERAL_UNIT_LIST, GENERAL_BUILDING_LIST, UNIT_TYPES, BUILDING_TYPES, SPEED_OF_GAME, get_angle_between
 from game.animation import BuildingDeathAnimation, VillagerAttackAnimation, VillagerMiningAnimation, \
     IdleDragonAnimation, DeathDragonAnimation
 
@@ -612,8 +612,7 @@ class Unit:
     def change_tile(self, new_tile):
         # remove the unit from its current position on the map
         if self.pos != new_tile:
-            if self.map.get_angle_between(self.pos, new_tile, self) != -1:
-                self.angle = self.map.get_angle_between(self.pos, new_tile, self)
+            self.angle = get_angle_between(self.pos, new_tile)
 
         self.map.units[self.pos[0]][self.pos[1]] = None
         self.map.map[self.pos[0]][self.pos[1]]["tile"] = ""
@@ -759,7 +758,7 @@ class Villager(Unit):
         if self.target is not None:
             if abs(self.pos[0] - self.target.pos[0]) <= 1 and abs(self.pos[1] - self.target.pos[1]) <= 1:
 
-                self.angle = self.map.get_angle_between(self.pos, self.target.pos, self)
+                self.angle = get_angle_between(self.pos, self.target.pos)
 
                 if self.is_attacking and (self.now - self.attack_cooldown > self.attack_speed):
 
@@ -806,7 +805,8 @@ class Villager(Unit):
 
     def go_to_build(self, pos, name):
         if self.map.get_empty_adjacent_tiles(pos):
-            villager_dest = self.map.get_empty_adjacent_tiles(pos)[0]
+            #villager_dest = self.map.get_empty_adjacent_tiles(pos)[0]
+            villager_dest = pos
             self.move_to(self.map.map[villager_dest[0]][villager_dest[1]])
             self.is_moving_to_build = True
 
@@ -815,7 +815,7 @@ class Villager(Unit):
     def build(self):
         self.is_moving_to_build = False
         if self.building_to_create is not None:
-            self.angle = self.map.get_angle_between(self.pos, self.building_to_create["pos"], self)
+            self.angle = get_angle_between(self.pos, self.building_to_create["pos"])
 
         new_building = None
         if self.building_to_create["name"] == "Farm":
@@ -903,7 +903,7 @@ class Villager(Unit):
     def gather_ressources(self):
         if self.targeted_ressource is not None and type(self.targeted_ressource) != Villager:
             this_target = self.map.map[self.targeted_ressource[0]][self.targeted_ressource[1]]
-            self.angle = self.map.get_angle_between(self.pos, self.targeted_ressource, self)
+            self.angle = get_angle_between(self.pos, self.targeted_ressource)
 
             if self.is_gathering and (self.now - self.attack_cooldown > self.attack_speed):
 
@@ -948,7 +948,7 @@ class Villager(Unit):
                     self.change_tile(new_pos)
 
                 self.path_index += 1
-                if self.path_index == len(self.path):
+                if self.path_index == len(self.path) or (self.path_index == len(self.path) - 1 and self.is_moving_to_build):
                     self.searching_for_path = False
                     self.is_on_tile = True
                     if self.is_moving_to_build:
@@ -1087,7 +1087,7 @@ class Clubman(Unit):
         if self.target is not None:
             if abs(self.pos[0] - self.target.pos[0]) <= 1 and abs(self.pos[1] - self.target.pos[1]) <= 1:
 
-                self.angle = self.map.get_angle_between(self.pos, self.target.pos, self)
+                self.angle = get_angle_between(self.pos, self.target.pos)
 
                 if self.is_attacking and (self.now - self.attack_cooldown > self.attack_speed):
 
@@ -1243,8 +1243,8 @@ class Dragon(Unit):
         if self.target is not None:
             if abs(self.pos[0] - self.target.pos[0]) <= 1 and abs(self.pos[1] - self.target.pos[1]) <= 1:
                 possible_angles_list = (0, 90, 180, 270)
-                if self.map.get_angle_between(self.pos, self.target.pos, self) in possible_angles_list:
-                    self.angle = self.map.get_angle_between(self.pos, self.target.pos, self)
+                if get_angle_between(self.pos, self.target.pos) in possible_angles_list:
+                    self.angle = get_angle_between(self.pos, self.target.pos)
 
                 if self.is_attacking and (self.now - self.attack_cooldown > self.attack_speed):
                     self.map.hud.boom_animation.play(self.map.grid_to_display_pos(self.target.pos))
@@ -1318,8 +1318,8 @@ class Dragon(Unit):
         # remove the unit from its current position on the map
         possible_angles_list = (0, 90, 180, 270)
         if self.pos != new_tile:
-            if self.map.get_angle_between(self.pos, new_tile, self) in possible_angles_list:
-                self.angle = self.map.get_angle_between(self.pos, new_tile, self)
+            if get_angle_between(self.pos, new_tile) in possible_angles_list:
+                self.angle = get_angle_between(self.pos, new_tile)
 
         self.map.units[self.pos[0]][self.pos[1]] = None
         self.map.map[self.pos[0]][self.pos[1]]["tile"] = ""

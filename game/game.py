@@ -266,7 +266,6 @@ class Game:
                                         this_villager.owner.towncenter.pos[1]-1):
                                     this_villager.go_to_townhall()
 
-
     def update(self):
         self.camera.update()
         self.hud.update(self.screen)

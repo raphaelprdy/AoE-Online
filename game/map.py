@@ -1193,57 +1193,6 @@ class Map:
             self.hud.dragon_sprites["idle"]["0"][0].get_height() - TILE_SIZE) + camera.scroll.y - 25)
         unit.idle_animation.play(animation_pos)
 
-    # returns the angle between the origin tile and the destination tile. Angle goes from 0 to 360, 0 top, 90 right, etc...
-    def get_angle_between(self, origin_tile_pos: [int, int], end_tile_pos: [int, int], unit):
-        # first we calculate angle between grid, then we will apply some maths to get the "real" isometric angle
-        # if origin == destination, no calcul
-        angle = 0
-
-        # linear movement : left right ; y the same, x varies
-        if end_tile_pos[1] == origin_tile_pos[1]:
-            # from left to right
-            if end_tile_pos[0] > origin_tile_pos[0]:
-                angle = 90
-            # else from right to left
-            else:
-                angle = 270
-
-        # linear movement : top bottom ; x the same, y varies
-        elif end_tile_pos[0] == origin_tile_pos[0]:
-            # from top to bottom
-            if end_tile_pos[1] > origin_tile_pos[1]:
-                angle = 180
-
-            # else from bottom to top
-            else:
-                angle = 0
-
-
-        # diagonal movement : top left bottom right ; dx = dy
-        elif end_tile_pos[0] - origin_tile_pos[0] == end_tile_pos[1] - origin_tile_pos[1]:
-            # if going down
-            if end_tile_pos[0] - origin_tile_pos[0] > 0:
-                angle = 135
-
-            # else he is going up
-            else:
-                angle = 315
-
-        # diagonal movement : top right bottom left ; dx = - dy
-        elif end_tile_pos[0] - origin_tile_pos[0] == - (end_tile_pos[1] - origin_tile_pos[1]):
-            # if going towards top right
-            if end_tile_pos[0] - origin_tile_pos[0] > 0:
-                angle = 45
-
-            # else he is going bottom left
-            else:
-                angle = 225
-
-        # transformation to get isometric
-        angle = angle + 45
-
-        return angle
-
     def load_anchor_points(self, path):
         anchor_dic = {}
         with open(path, newline='') as csvfile:
