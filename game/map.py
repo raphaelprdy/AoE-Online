@@ -748,7 +748,7 @@ class Map:
         pygame.draw.polygon(screen, get_color_code(color), iso_poly, 3)
 
     # enable/disable show_grid setting. If previously true, becomes False, if previously False, becomes True. False by default
-    # actual display is in "create_map" in map.py file
+    # actual display is in "create_map" in map.py file. We don't "show grid" actually be reduce the size of tile to artificially creat black squares hehehe
     def show_grid(self):
         self.display_grid_setting = True if not self.display_grid_setting else False
 

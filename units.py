@@ -133,7 +133,7 @@ class TownCenter(Building):
         player_owner_of_unit.max_population += 5
         #used when you order the creation of multiples units
         self.queue = 0
-        armor = 3
+        self.armor = 3
         self.resource_manager_cooldown = 0
 
         super().__init__(pos, map, player_owner_of_unit)
@@ -233,6 +233,7 @@ class House(Building):
         self.construction_cost = [600, 0, 0, 0]
         self.max_health = 50
         player_owner_of_unit.max_population += 5
+        self.armor = 0
 
         super().__init__(pos, map, player_owner_of_unit)
         self.death_animation_group = pygame.sprite.Group()
@@ -274,7 +275,7 @@ class Market(Building):
 
         self.construction_cost = [300, 0, 0, 50]
         self.max_health = 150
-
+        self.armor = -2
         super().__init__(pos, map, player_owner_of_unit)
         self.death_animation_group = pygame.sprite.Group()
         self.death_animation = BuildingDeathAnimation(self, map.hud.all_buildings_death_animations["House"][player_owner_of_unit.color])
@@ -376,7 +377,7 @@ class Barracks(Building):
 
         self.name = "Barracks"
         # additional collision bc 2x1 building
-
+        self.armor = 2
         map.map[pos[0] + 1][pos[1]]["tile"] = "building"
         map.collision_matrix[pos[1]][pos[0] + 1] = 0
 
@@ -395,7 +396,6 @@ class Barracks(Building):
         self.unit_type_currently_trained = None
         #used when you order the creation of multiples units
         self.queue = 0
-        armor = 3
         self.resource_manager_cooldown = 0
 
         super().__init__(pos, map, player_owner_of_unit)
@@ -474,7 +474,7 @@ class Tower(Building):
         self.name = "Tower"
         self.construction_cost = [100, 0, 0, 75]
         self.max_health = 200
-
+        self.armor = -2
         super().__init__(pos, map, player_owner_of_unit)
         #self.death_animation_group = pygame.sprite.Group()
         #self.death_animation = BuildingDeathAnimation(self, map.hud.all_buildings_death_animations["House"][player_owner_of_unit.color])
@@ -517,7 +517,7 @@ class Wall(Building):
         self.max_health = 100
         # can be 0,1 or 2. 0 is for \ like wall and used by default, 1 for / wall and 2 for corners
         self.variation = 0
-
+        self.armor = 1
         super().__init__(pos, map, player_owner_of_unit)
         #self.death_animation_group = pygame.sprite.Group()
         #self.death_animation = BuildingDeathAnimation(self, map.hud.all_buildings_death_animations["House"][player_owner_of_unit.color])
