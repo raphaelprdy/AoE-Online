@@ -426,7 +426,13 @@ def load_images_better(path):
     """
 
     images = []
+    images_names = []
     for file_name in os.listdir(path):
+        images_names.append(file_name)
+    
+    images_names.sort()
+
+    for file_name in images_names:
         image = pygame.image.load(path + os.sep + file_name).convert_alpha()
         images.append(image)
     return images
