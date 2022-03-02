@@ -56,10 +56,10 @@ class Map:
         for p in player_list:
             self.place_starting_units(p)
 
-        self.anchor_points = self.load_anchor_points("Resources/assets/axeman_attack_anchor_90.csv")
+        self.anchor_points = self.load_anchor_points("resources/assets/axeman_attack_anchor_90.csv")
         # self.map[10][10] = Dragon((10,20), MAIN_PLAYER, self)
         # to improve animations, not working for now
-        # self.anchor_points = self.load_anchor_points("Resources/assets/axeman_attack_anchor_90.csv")
+        # self.anchor_points = self.load_anchor_points("resources/assets/axeman_attack_anchor_90.csv")
 
     def create_map(self):
         map = []
@@ -277,18 +277,18 @@ class Map:
 
     def load_images(self):
         block = pygame.image.load(os.path.join(assets_path, "block.png")).convert_alpha()
-        tree = pygame.image.load("Resources/assets/Models/Map/Trees/1.png").convert_alpha()
-        rock = pygame.image.load(os.path.join("Resources/assets/Models/Map/Stones/7.png")).convert_alpha()
-        # grass_tile = scale_image(pygame.image.load("Resources/assets/Models/Map/grass_01.png").convert_alpha(), w=128)
+        tree = pygame.image.load("resources/assets/Models/Map/Trees/1.png").convert_alpha()
+        rock = pygame.image.load(os.path.join("resources/assets/Models/Map/Stones/7.png")).convert_alpha()
+        # grass_tile = scale_image(pygame.image.load("resources/assets/Models/Map/grass_01.png").convert_alpha(), w=128)
         grass_tile = scale_image(
-            pygame.image.load("Resources/assets/Models/Map/grass/t_grass_aoe1_x2_001.png").convert_alpha(), w=125)
-        gold = pygame.image.load(os.path.join("Resources/assets/Models/Map/Gold/4.png")).convert_alpha()
-        berrybush = pygame.image.load(os.path.join("Resources/assets/Models/Map/Berrybush/1.png")).convert_alpha()
+            pygame.image.load("resources/assets/Models/Map/grass/t_grass_aoe1_x2_001.png").convert_alpha(), w=125)
+        gold = pygame.image.load(os.path.join("resources/assets/Models/Map/Gold/4.png")).convert_alpha()
+        berrybush = pygame.image.load(os.path.join("resources/assets/Models/Map/Berrybush/1.png")).convert_alpha()
 
         town_center = pygame.image.load(
-            "Resources/assets/Models/Buildings/Town_Center/BLUE/town_center_x1.png").convert_alpha()
-        house = pygame.image.load("Resources/assets/Models/Buildings/House/BLUE/house_1BLUE.png").convert_alpha()
-        farm = pygame.image.load("Resources/assets/Models/Buildings/Farm/farmBLUE.png").convert_alpha()
+            "resources/assets/Models/Buildings/Town_Center/BLUE/town_center_x1.png").convert_alpha()
+        house = pygame.image.load("resources/assets/Models/Buildings/House/BLUE/house_1BLUE.png").convert_alpha()
+        farm = pygame.image.load("resources/assets/Models/Buildings/Farm/farmBLUE.png").convert_alpha()
 
         barracks = None
         villager = None

@@ -448,8 +448,8 @@ class Hud:
     def load_buildings_icons(self):
 
         town_center = pygame.image.load("resources/assets/icons/town_center_icon_hd.png").convert_alpha()
-        house = pygame.image.load("Resources/assets/icons/houseDE.png").convert_alpha()
-        farm = pygame.image.load("resources/assets/icons/farmDE.png").convert_alpha()
+        house = pygame.image.load("resources/assets/icons/houseDE.png").convert_alpha()
+        farm = pygame.image.load("resources/assets/icons/FarmDE.png").convert_alpha()
         barracks = pygame.image.load("resources/assets/icons/barracks_icon.png").convert_alpha()
         market = pygame.image.load("resources/assets/icons/market_icon.png").convert_alpha()
 
@@ -1025,31 +1025,31 @@ class Hud:
 
     # returns dic containing images of First age Buildings; Need to specify the player's color. Uses like that : images["House"]["RED"]
     def load_first_age_building_images(self):
-        town_center = {"BLUE": load_images_better("Resources/assets/Models/Buildings/Town_Center/BLUE/"),
-                       "RED": load_images_better("Resources/assets/Models/Buildings/Town_Center/RED/"),
-                       "GREEN": load_images_better("Resources/assets/Models/Buildings/Town_Center/GREEN/"),
-                       "YELLOW": load_images_better("Resources/assets/Models/Buildings/Town_Center/YELLOW/")}
+        town_center = {"BLUE": load_images_better("resources/assets/Models/Buildings/Town_Center/BLUE/"),
+                       "RED": load_images_better("resources/assets/Models/Buildings/Town_Center/RED/"),
+                       "GREEN": load_images_better("resources/assets/Models/Buildings/Town_Center/GREEN/"),
+                       "YELLOW": load_images_better("resources/assets/Models/Buildings/Town_Center/YELLOW/")}
 
-        # pygame.image.load("Resources/assets/Models/Buildings/Town_Center/town_center_x1.png").convert_alpha()
-        house = {"BLUE": load_images_better("Resources/assets/Models/Buildings/House/BLUE/"),
-                 "RED": load_images_better("Resources/assets/Models/Buildings/House/RED/"),
-                 "GREEN": load_images_better("Resources/assets/Models/Buildings/House/GREEN/"),
-                 "YELLOW": load_images_better("Resources/assets/Models/Buildings/House/YELLOW/")}
+        # pygame.image.load("resources/assets/Models/Buildings/Town_Center/town_center_x1.png").convert_alpha()
+        house = {"BLUE": load_images_better("resources/assets/Models/Buildings/House/BLUE/"),
+                 "RED": load_images_better("resources/assets/Models/Buildings/House/RED/"),
+                 "GREEN": load_images_better("resources/assets/Models/Buildings/House/GREEN/"),
+                 "YELLOW": load_images_better("resources/assets/Models/Buildings/House/YELLOW/")}
 
-        farm = {"BLUE": pygame.image.load("Resources/assets/Models/Buildings/Farm/farmBLUE.png").convert_alpha(),
-                "RED": pygame.image.load("Resources/assets/Models/Buildings/Farm/farmRED.png").convert_alpha(),
-                "GREEN": pygame.image.load("Resources/assets/Models/Buildings/Farm/farmGREEN.png").convert_alpha(),
-                "YELLOW": pygame.image.load("Resources/assets/Models/Buildings/Farm/farmYELLOW.png").convert_alpha()}
+        farm = {"BLUE": pygame.image.load("resources/assets/Models/Buildings/Farm/farmBLUE.png").convert_alpha(),
+                "RED": pygame.image.load("resources/assets/Models/Buildings/Farm/farmRED.png").convert_alpha(),
+                "GREEN": pygame.image.load("resources/assets/Models/Buildings/Farm/farmGREEN.png").convert_alpha(),
+                "YELLOW": pygame.image.load("resources/assets/Models/Buildings/Farm/farmYELLOW.png").convert_alpha()}
 
-        barracks = {"BLUE": load_images_better("Resources/assets/Models/Buildings/Barracks/BLUE/"),
-                 "RED": load_images_better("Resources/assets/Models/Buildings/Barracks/RED/"),
-                 "GREEN": load_images_better("Resources/assets/Models/Buildings/Barracks/GREEN/"),
-                 "YELLOW": load_images_better("Resources/assets/Models/Buildings/Barracks/YELLOW/")}
+        barracks = {"BLUE": load_images_better("resources/assets/Models/Buildings/Barracks/BLUE/"),
+                 "RED": load_images_better("resources/assets/Models/Buildings/Barracks/RED/"),
+                 "GREEN": load_images_better("resources/assets/Models/Buildings/Barracks/GREEN/"),
+                 "YELLOW": load_images_better("resources/assets/Models/Buildings/Barracks/YELLOW/")}
 
-        market = {"BLUE": load_images_better("Resources/assets/Models/Buildings/Market/BLUE/"),
-                 "RED": load_images_better("Resources/assets/Models/Buildings/Market/RED/"),
-                 "GREEN": load_images_better("Resources/assets/Models/Buildings/Market/GREEN/"),
-                 "YELLOW": load_images_better("Resources/assets/Models/Buildings/Market/YELLOW/")}
+        market = {"BLUE": load_images_better("resources/assets/Models/Buildings/Market/BLUE/"),
+                 "RED": load_images_better("resources/assets/Models/Buildings/Market/RED/"),
+                 "GREEN": load_images_better("resources/assets/Models/Buildings/Market/GREEN/"),
+                 "YELLOW": load_images_better("resources/assets/Models/Buildings/Market/YELLOW/")}
         # to resize
         for x in range(0, 4):
             market["BLUE"][x] = scale_image(market["BLUE"][x], w=200)
@@ -1057,10 +1057,10 @@ class Hud:
             market["GREEN"][x] = scale_image(market["GREEN"][x], w=200)
             market["YELLOW"][x] = scale_image(market["YELLOW"][x], w=200)
 
-        tower = {"BLUE": load_images_better("Resources/assets/Models/Buildings/Tower/BLUE/"),
-                    "RED": load_images_better("Resources/assets/Models/Buildings/Tower/RED/"),
-                    "GREEN": load_images_better("Resources/assets/Models/Buildings/Tower/GREEN/"),
-                    "YELLOW": load_images_better("Resources/assets/Models/Buildings/Tower/YELLOW/")}
+        tower = {"BLUE": load_images_better("resources/assets/Models/Buildings/Tower/BLUE/"),
+                    "RED": load_images_better("resources/assets/Models/Buildings/Tower/RED/"),
+                    "GREEN": load_images_better("resources/assets/Models/Buildings/Tower/GREEN/"),
+                    "YELLOW": load_images_better("resources/assets/Models/Buildings/Tower/YELLOW/")}
         # to resize
         for x in range (0,4):
             tower["BLUE"][x] = scale_image(tower["BLUE"][x], w= 180)
@@ -1069,10 +1069,10 @@ class Hud:
             tower["YELLOW"][x] = scale_image(tower["YELLOW"][x], w= 180)
 
 
-        wall = {"BLUE": load_images_better("Resources/assets/Models/Buildings/Wall/BLUE/Left/"),
-                    "RED": load_images_better("Resources/assets/Models/Buildings/Wall/RED/Left"),
-                    "GREEN": load_images_better("Resources/assets/Models/Buildings/Wall/GREEN/Left"),
-                    "YELLOW": load_images_better("Resources/assets/Models/Buildings/Wall/YELLOW/Left")}
+        wall = {"BLUE": load_images_better("resources/assets/Models/Buildings/Wall/BLUE/Left/"),
+                    "RED": load_images_better("resources/assets/Models/Buildings/Wall/RED/Left"),
+                    "GREEN": load_images_better("resources/assets/Models/Buildings/Wall/GREEN/Left"),
+                    "YELLOW": load_images_better("resources/assets/Models/Buildings/Wall/YELLOW/Left")}
 
         for x in range (0,4):
             wall["BLUE"][x] = scale_image(wall["BLUE"][x], w= 100)
@@ -1094,10 +1094,10 @@ class Hud:
 
     def load_resources_images(self):
 
-        rock_sprites = load_images_better("Resources/assets/Models/Map/Stones")
-        gold_sprites = load_images_better("Resources/assets/Models/Map/Gold")
-        berry_bush_sprites = load_images_better("Resources/assets/Models/Map/Berrybush")
-        tree_sprites = load_images_better("Resources/assets/Models/Map/Trees")
+        rock_sprites = load_images_better("resources/assets/Models/Map/Stones")
+        gold_sprites = load_images_better("resources/assets/Models/Map/Gold")
+        berry_bush_sprites = load_images_better("resources/assets/Models/Map/Berrybush")
+        tree_sprites = load_images_better("resources/assets/Models/Map/Trees")
         grass_sprites = load_images_better("resources/assets/Models/Map/grass")
 
         resources_sprites = {"rock": rock_sprites, "gold": gold_sprites, "berrybush": berry_bush_sprites,
@@ -1241,27 +1241,27 @@ class Hud:
 
 
     def load_villager_idle_fixed_sprites(self):
-        dic = {"BLUE": load_images_better("Resources/assets/Models/Units/Villager/BLUE/Idle/static"),
-               "RED": load_images_better("Resources/assets/Models/Units/Villager/RED/Idle/static"),
-               "GREEN": load_images_better("Resources/assets/Models/Units/Villager/GREEN/Idle/static"),
-               "YELLOW": load_images_better("Resources/assets/Models/Units/Villager/YELLOW/Idle/static")
+        dic = {"BLUE": load_images_better("resources/assets/Models/Units/Villager/BLUE/Idle/static"),
+               "RED": load_images_better("resources/assets/Models/Units/Villager/RED/Idle/static"),
+               "GREEN": load_images_better("resources/assets/Models/Units/Villager/GREEN/Idle/static"),
+               "YELLOW": load_images_better("resources/assets/Models/Units/Villager/YELLOW/Idle/static")
                }
         return dic
 
     def load_clubman_idle_fixed_sprites(self):
-        dic = {"BLUE": load_images_better("Resources/assets/Models/Units/Clubman/BLUE/Idle/static"),
-               "RED": load_images_better("Resources/assets/Models/Units/Clubman/RED/Idle/static"),
-               "GREEN": load_images_better("Resources/assets/Models/Units/Clubman/GREEN/Idle/static"),
-               "YELLOW": load_images_better("Resources/assets/Models/Units/Clubman/YELLOW/Idle/static")
+        dic = {"BLUE": load_images_better("resources/assets/Models/Units/Clubman/BLUE/Idle/static"),
+               "RED": load_images_better("resources/assets/Models/Units/Clubman/RED/Idle/static"),
+               "GREEN": load_images_better("resources/assets/Models/Units/Clubman/GREEN/Idle/static"),
+               "YELLOW": load_images_better("resources/assets/Models/Units/Clubman/YELLOW/Idle/static")
                }
         return dic
 
     # flags that are displayed to show the unit's destination
     def load_destination_flags(self):
-        dic = {"BLUE": load_images_better("Resources/assets/Models/Units/dest_flag/BLUE"),
-               "RED": load_images_better("Resources/assets/Models/Units/dest_flag/RED"),
-               "GREEN": load_images_better("Resources/assets/Models/Units/dest_flag/GREEN"),
-               "YELLOW": load_images_better("Resources/assets/Models/Units/dest_flag/YELLOW")
+        dic = {"BLUE": load_images_better("resources/assets/Models/Units/dest_flag/BLUE"),
+               "RED": load_images_better("resources/assets/Models/Units/dest_flag/RED"),
+               "GREEN": load_images_better("resources/assets/Models/Units/dest_flag/GREEN"),
+               "YELLOW": load_images_better("resources/assets/Models/Units/dest_flag/YELLOW")
                }
         return dic
 
