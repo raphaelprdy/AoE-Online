@@ -26,25 +26,25 @@ def fonction_menu_principal() :
     dezoom2 = int(1114/sheight )
     
 
-    img = PhotoImage(file="bg.GIF").subsample(dezoom,dezoom2)
+    img = PhotoImage(file="BG.gif").subsample(dezoom,dezoom2)
     graphe.create_image(swidth/2,sheight/2, image=img)
 
-    img2 = PhotoImage(file="mainmenuholder_1.GIF").subsample(dezoom,dezoom2)
+    img2 = PhotoImage(file="mainmenuholder_1.gif").subsample(dezoom,dezoom2)
     graphe.create_image(swidth*0.18,sheight*.8, image=img2)
 
-    img3 = PhotoImage(file="mainmenuholder_2.GIF").subsample(dezoom,dezoom2)
+    img3 = PhotoImage(file="mainmenuholder_2.gif").subsample(dezoom,dezoom2)
     graphe.create_image(swidth*0.1795,sheight*.704, image=img3)
 
-    img4 = PhotoImage(file="mainmenuholder_2.GIF").subsample(dezoom,dezoom2)
+    img4 = PhotoImage(file="mainmenuholder_2.gif").subsample(dezoom,dezoom2)
     graphe.create_image(swidth*0.1795,sheight*.65, image=img4)
 
-    img5 = PhotoImage(file="mainmenuholder_2.GIF").subsample(dezoom,dezoom2)
+    img5 = PhotoImage(file="mainmenuholder_2.gif").subsample(dezoom,dezoom2)
     graphe.create_image(swidth*0.1795,sheight*.59, image=img5)
 
-    img6 = PhotoImage(file="mainmenuholder_2.GIF").subsample(dezoom,dezoom2)
+    img6 = PhotoImage(file="mainmenuholder_2.gif").subsample(dezoom,dezoom2)
     graphe.create_image(swidth*0.1795,sheight*.5, image=img6)
 
-    img7 = PhotoImage(file="mainmenuholder_3.GIF").subsample(dezoom,dezoom2)
+    img7 = PhotoImage(file="mainmenuholder_3.gif").subsample(dezoom,dezoom2)
     graphe.create_image(swidth*0.18,sheight*.41, image=img7)
 
     graphe.pack()
@@ -75,7 +75,7 @@ def Nouvelpartie(fen,w,h):
   
     graphe2=Canvas(fen2, width=w, height=h,bg="white")
 
-    img2 = PhotoImage(file="parametre.GIF").zoom(1,1)
+    img2 = PhotoImage(file="parametre.gif").zoom(1,1)
     graphe2.create_image(w/2,h/2, image=img2)
 
     graphe2.pack()
