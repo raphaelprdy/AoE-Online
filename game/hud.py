@@ -33,9 +33,17 @@ class Hud:
         self.tooltip_surface.fill(self.tooltip_color)
         self.tooltip_rect = self.tooltip_surface.get_rect(topleft=(0, self.height * 0.65))
 
+        #scaled menus
+
+        self.action_menu_scaled = scale_image(action_menu, h=0.25*self.height, w=0.25*self.width)
+        self.minimap_panel_scaled = scale_image(minimap_panel, h=0.25*self.height, w=0.25*self.height*2.0295)
+        selection_panel_width = 0.75*self.width - self.minimap_panel_scaled.get_width()
+        self.selection_panel_scaled = scale_image(selection_panel, h=0.25*self.height, w=selection_panel_width)
+
+
         # unit_description_hud
         self.icon_size = (50, 50)
-        self.trained_unit_icon_pos = (action_menu.get_width() + 290, self.height * 0.8 + 10)
+        self.trained_unit_icon_pos = (self.action_menu_scaled.get_width() + 290, self.height * 0.8 + 10)
         self.trained_unit_icon_surface = pygame.Surface(self.icon_size, pygame.SRCALPHA)
         self.trained_unit_icon_rect = self.tooltip_surface.get_rect(topleft=self.trained_unit_icon_pos)
 
@@ -94,7 +102,7 @@ class Hud:
 
     #town_hall has 2 buttons in its action panel : train Villager and Advance to Second Age
     def create_train_menu_town_hall(self):
-        render_pos = [25, self.height - action_menu.get_height() + 40]
+        render_pos = [25, self.height - self.action_menu_scaled.get_height() + 40]
         object_width = 50
 
         tiles = []
@@ -116,7 +124,7 @@ class Hud:
                     }
                 )
         # advancing age
-        render_pos = [25, self.height - action_menu.get_height() + 125]
+        render_pos = [25, self.height - self.action_menu_scaled.get_height() + 125]
         tiles.append(
             {
                 "name": "Advance to Feudal Age",
@@ -129,7 +137,7 @@ class Hud:
         return tiles
 
     def create_action_menu_barracks(self):
-        render_pos = [25, self.height - action_menu.get_height() + 40]
+        render_pos = [25, self.height - self.action_menu_scaled.get_height() + 40]
         object_width = 50
 
         tiles = []
@@ -155,7 +163,7 @@ class Hud:
         return tiles
 
     def create_market_action_panel(self):
-        render_pos = [25, self.height - action_menu.get_height() + 40]
+        render_pos = [25, self.height - self.action_menu_scaled.get_height() + 40]
         object_width = 50
 
         tiles = []
@@ -189,7 +197,7 @@ class Hud:
         return tiles
 
     def create_wall_action_panel(self):
-        render_pos = [25, self.height - action_menu.get_height() + 40]
+        render_pos = [25, self.height - self.action_menu_scaled.get_height() + 40]
         object_width = 50
 
         tiles = []
@@ -228,7 +236,7 @@ class Hud:
                     }
                 )
                 # if more than 5 icons, we go to the line below in action panel
-                if compteur > 5:
+                if (pos[0] > ((1-0.0712)*self.action_menu_scaled.get_width() - image.get_width() - 25)):
                     #position reseted to line below
                     render_pos = [0 + 25 - image.get_width() - 5, self.height * 0.8 + 65]
                     compteur = 0
@@ -246,7 +254,7 @@ class Hud:
         if mouse_action[2]:
             self.selected_tile = None
 
-        # building action_menu
+        # building self.action_menu_scaled
         if self.bottom_left_menu is not None:
             for button in self.bottom_left_menu:
                 if button["name"] != "STOP" and button["name"] != "Pivote":
@@ -265,7 +273,7 @@ class Hud:
                                 "icon": advance_to_third_age_icon,
                                 "image": None,
                                 "rect": advance_to_third_age_icon.get_rect(
-                                    topleft=[25, self.height - action_menu.get_height() + 125]),
+                                    topleft=[25, self.height - self.action_menu_scaled.get_height() + 125]),
                                 "affordable": True
                             })
                     elif button["name"] == "Advance to Castle Age" and self.examined_tile.owner.age == 3:
@@ -277,7 +285,7 @@ class Hud:
                                 "icon": advance_to_fourth_age_icon,
                                 "image": None,
                                 "rect": advance_to_fourth_age_icon.get_rect(
-                                    topleft=[25, self.height - action_menu.get_height() + 125]),
+                                    topleft=[25, self.height - self.action_menu_scaled.get_height() + 125]),
                                 "affordable": True
                             })
                     elif button["name"] == "Advance to Imperial Age" and self.examined_tile.owner.age == 4:
@@ -371,7 +379,7 @@ class Hud:
             # to remove the stop action button if it is no longer useful
             if self.examined_tile is not None and isinstance(self.examined_tile, TownCenter):
                 if self.examined_tile.is_working and not self.is_cancel_button_present:
-                    stop_icon_pos = [action_menu.get_width() - 90, self.height * 0.8 + 52 * 2]
+                    stop_icon_pos = [self.action_menu_scaled.get_width() - 90, self.height * 0.8 + 52 * 2]
                     icon = stop_icon
                     rect = icon.get_rect(topleft=stop_icon_pos)
                     self.bottom_left_menu.append(
@@ -408,11 +416,11 @@ class Hud:
 
         if self.examined_tile is not None:
             # Draw minimap
-            screen.blit(minimap_panel,
-                        (self.width - minimap_panel.get_width(), self.height - selection_panel.get_height()))
+            screen.blit(self.minimap_panel_scaled,
+                        (self.width - self.minimap_panel_scaled.get_width(), self.height - self.selection_panel_scaled.get_height()))
             map.draw_minimap(screen, self.camera)
-            screen.blit(action_menu, (0, self.height - action_menu.get_height()))
-            screen.blit(selection_panel, (action_menu.get_width(), self.height - selection_panel.get_height()))
+            screen.blit(self.action_menu_scaled, (0, self.height - self.action_menu_scaled.get_height()))
+            screen.blit(self.selection_panel_scaled, (self.action_menu_scaled.get_width(), self.height - self.selection_panel_scaled.get_height()))
 
             self.display_entity_description(screen, map)
 
@@ -522,7 +530,7 @@ class Hud:
             hp_displayed = (entity.current_health / entity.max_health * health_bar_length)
             # from 1 to 100% of max health, used to know which color we use for the health bar
             unit_pourcentage_of_max_hp = (entity.current_health / entity.max_health) * 100
-            bar_info = (action_menu.get_width() + 30, self.height * 0.9 + 43, hp_displayed, 6)
+            bar_info = (self.action_menu_scaled.get_width() + 30, self.height * 0.9 + 43, hp_displayed, 6)
 
             if 0 < unit_pourcentage_of_max_hp <= 25:
                 pygame.draw.rect(screen, get_color_code("RED"), bar_info)
@@ -541,11 +549,11 @@ class Hud:
 
             # outer rectangle for the shape of life bar, never changes
             pygame.draw.rect(screen, get_color_code("BLACK"),
-                             (action_menu.get_width() + 30, self.height * 0.9 + 43, health_bar_length, 6), 2)
+                             (self.action_menu_scaled.get_width() + 30, self.height * 0.9 + 43, health_bar_length, 6), 2)
 
             # health text
             health_text = str(entity.current_health) + " / " + str(entity.max_health)
-            draw_text(screen, health_text, 16, (255, 255, 255), (action_menu.get_width() + 45, self.height * 0.92 + 33))
+            draw_text(screen, health_text, 16, (255, 255, 255), (self.action_menu_scaled.get_width() + 45, self.height * 0.92 + 33))
 
         # if for_hud is False, it means we must display the life bar above the entity
         elif not for_hud and not for_resource:
@@ -683,98 +691,98 @@ class Hud:
             if isinstance(self.examined_tile, Villager):
                 img = self.villager_sprites[self.examined_tile.owner.color][4].copy()
                 img_scaled = scale_image(img, h * 0.20)
-                screen.blit(img_scaled, (action_menu.get_width() + 50, self.height - selection_panel.get_height() + 70))
+                screen.blit(img_scaled, (self.action_menu_scaled.get_width() + 50, self.height - self.selection_panel_scaled.get_height() + 70))
             elif isinstance(self.examined_tile, Clubman):
                 img = self.clubman_sprites[self.examined_tile.owner.color][4].copy()
                 img_scaled = scale_image(img, h * 0.40)
-                screen.blit(img_scaled, (action_menu.get_width() + 40, self.height - selection_panel.get_height() + 70))
+                screen.blit(img_scaled, (self.action_menu_scaled.get_width() + 40, self.height - self.selection_panel_scaled.get_height() + 70))
             elif isinstance(self.examined_tile, Dragon):
                 img = self.dragon_sprites["idle"]["180"][3].copy()
                 img_scaled = scale_image(img, h * 0.70)
-                screen.blit(img_scaled, (action_menu.get_width() + 20, self.height - selection_panel.get_height() + 50))
+                screen.blit(img_scaled, (self.action_menu_scaled.get_width() + 20, self.height - self.selection_panel_scaled.get_height() + 50))
 
         if type(self.examined_tile) == Farm:
             img_scaled = scale_image(img, h * 0.60)
-            screen.blit(img_scaled, (action_menu.get_width() + 20, self.height - selection_panel.get_height() + 85))
+            screen.blit(img_scaled, (self.action_menu_scaled.get_width() + 20, self.height - self.selection_panel_scaled.get_height() + 85))
 
         elif type(self.examined_tile) == House:
             img_scaled = scale_image(img, h * 0.50)
-            screen.blit(img_scaled, (action_menu.get_width() + 30, self.height - selection_panel.get_height() + 85))
+            screen.blit(img_scaled, (self.action_menu_scaled.get_width() + 30, self.height - self.selection_panel_scaled.get_height() + 85))
 
         elif type(self.examined_tile) == TownCenter:
             img_scaled = scale_image(img, h * 0.60)
-            screen.blit(img_scaled, (action_menu.get_width() + 20, self.height - selection_panel.get_height() + 75))
+            screen.blit(img_scaled, (self.action_menu_scaled.get_width() + 20, self.height - self.selection_panel_scaled.get_height() + 75))
 
         elif type(self.examined_tile) == Barracks:
             img_scaled = scale_image(img, h * 0.60)
-            screen.blit(img_scaled, (action_menu.get_width() + 20, self.height - selection_panel.get_height() + 75))
+            screen.blit(img_scaled, (self.action_menu_scaled.get_width() + 20, self.height - self.selection_panel_scaled.get_height() + 75))
 
         elif type(self.examined_tile) == Tower:
             img_scaled = scale_image(img, h * 0.50)
-            screen.blit(img_scaled, (action_menu.get_width() + 20, self.height - selection_panel.get_height() + 75))
+            screen.blit(img_scaled, (self.action_menu_scaled.get_width() + 20, self.height - self.selection_panel_scaled.get_height() + 75))
 
         elif type(self.examined_tile) == Wall:
             img_scaled = scale_image(img, h * 0.60)
-            screen.blit(img_scaled, (action_menu.get_width() + 20, self.height - selection_panel.get_height() + 75))
+            screen.blit(img_scaled, (self.action_menu_scaled.get_width() + 20, self.height - self.selection_panel_scaled.get_height() + 75))
 
         elif type(self.examined_tile) == Market:
             img_scaled = scale_image(img, h * 0.60)
-            screen.blit(img_scaled, (action_menu.get_width() + 20, self.height - selection_panel.get_height() + 85))
+            screen.blit(img_scaled, (self.action_menu_scaled.get_width() + 20, self.height - self.selection_panel_scaled.get_height() + 85))
 
         # for now, we display the picture of the object and its name
         # name
-        temp_pos = (action_menu.get_width() + 30, self.height * 0.79 + 20)
+        temp_pos = (self.action_menu_scaled.get_width() + 30, self.height * 0.79 + 20)
         if isinstance(self.examined_tile, Villager):
             villager = self.examined_tile
             temp_pos = temp_pos[0] + 13, temp_pos[1]
             # resources carried display if he has gathered smth
             if villager.gathered_ressource_stack > 0:
                 if villager.stack_type == "tree":
-                    screen.blit(scale_image(BIG_wood_icon,w=40), (action_menu.get_width() + selection_panel.get_width() -200, self.height * 0.79 + 50))
+                    screen.blit(scale_image(BIG_wood_icon,w=40), (self.action_menu_scaled.get_width() + self.selection_panel_scaled.get_width() -200, self.height * 0.79 + 50))
                     #self.gathered_ressource_stack = 0
 
                 elif villager.stack_type == "rock":
-                    screen.blit(scale_image(BIG_stone_icon,w=40), (action_menu.get_width() + selection_panel.get_width() -200, self.height * 0.79 + 50))
+                    screen.blit(scale_image(BIG_stone_icon,w=40), (self.action_menu_scaled.get_width() + self.selection_panel_scaled.get_width() -200, self.height * 0.79 + 50))
 
                 elif villager.stack_type == "berrybush":
-                    screen.blit(scale_image(BIG_food_icon,w=40), (action_menu.get_width() + selection_panel.get_width() -200, self.height * 0.79 + 50))
+                    screen.blit(scale_image(BIG_food_icon,w=40), (self.action_menu_scaled.get_width() + self.selection_panel_scaled.get_width() -200, self.height * 0.79 + 50))
 
                 elif villager.stack_type == "gold":
-                    screen.blit(scale_image(BIG_gold_icon,w=40), (action_menu.get_width() + selection_panel.get_width() -200, self.height * 0.79 + 50))
-                draw_text(screen, "Carried resources : ", 15, get_color_code("GOLD"), (action_menu.get_width() + selection_panel.get_width() -150,  self.height - selection_panel.get_height() + 65))
+                    screen.blit(scale_image(BIG_gold_icon,w=40), (self.action_menu_scaled.get_width() + self.selection_panel_scaled.get_width() -200, self.height * 0.79 + 50))
+                draw_text(screen, "Carried resources : ", 15, get_color_code("GOLD"), (self.action_menu_scaled.get_width() + self.selection_panel_scaled.get_width() -150,  self.height - self.selection_panel_scaled.get_height() + 65))
 
-                draw_text(screen, str(villager.gathered_ressource_stack), 14, (255, 255, 255), (action_menu.get_width() + selection_panel.get_width() -120, self.height - selection_panel.get_height() + 90))
+                draw_text(screen, str(villager.gathered_ressource_stack), 14, (255, 255, 255), (self.action_menu_scaled.get_width() + self.selection_panel_scaled.get_width() -120, self.height - self.selection_panel_scaled.get_height() + 90))
 
         elif isinstance(self.examined_tile, Farm) or isinstance(self.examined_tile, House) or \
                 isinstance(self.examined_tile, Barracks):
             temp_pos = temp_pos[0] + 16, temp_pos[1]
         draw_text(screen, self.examined_tile.name, 20, (255, 255, 255), temp_pos)
-        temp_pos = (action_menu.get_width() + 20 + 120, self.height * 0.79 + 16)
+        temp_pos = (self.action_menu_scaled.get_width() + 20 + 120, self.height * 0.79 + 16)
         pygame.draw.line(screen, (155, 155, 155), temp_pos,
                          (temp_pos[0], temp_pos[1] + 145), 2)
 
         # attack and armor display
-        temp_pos = (action_menu.get_width() + 20 + 175, self.height * 0.79 + 107)
+        temp_pos = (self.action_menu_scaled.get_width() + 20 + 175, self.height * 0.79 + 107)
         text = "Armor : "
         draw_text(screen, text, 15, get_color_code("GOLD"), temp_pos)
-        temp_pos = (action_menu.get_width() + 20 + 178, self.height * 0.79 + 128)
+        temp_pos = (self.action_menu_scaled.get_width() + 20 + 178, self.height * 0.79 + 128)
         draw_text(screen, str(self.examined_tile.armor), 12, (255, 255, 255), temp_pos)
 
         # buildings
         if issubclass(type(self.examined_tile), Building):
-            temp_pos = (action_menu.get_width() + 20 + 130, self.height * 0.79 + 100)
+            temp_pos = (self.action_menu_scaled.get_width() + 20 + 130, self.height * 0.79 + 100)
             screen.blit(building_armor_icon, temp_pos)
         # units
         else:
-            temp_pos = (action_menu.get_width() + 20 + 130, self.height * 0.79 + 50)
+            temp_pos = (self.action_menu_scaled.get_width() + 20 + 130, self.height * 0.79 + 50)
             screen.blit(melee_attack_icon, temp_pos)
-            temp_pos = (action_menu.get_width() + 20 + 130, self.height * 0.79 + 105)
+            temp_pos = (self.action_menu_scaled.get_width() + 20 + 130, self.height * 0.79 + 105)
             screen.blit(armor_icon, temp_pos)
 
-            temp_pos = (action_menu.get_width() + 20 + 175, self.height - selection_panel.get_height() + 66)
+            temp_pos = (self.action_menu_scaled.get_width() + 20 + 175, self.height - self.selection_panel_scaled.get_height() + 66)
             text = "Damage : "
             draw_text(screen, text, 15, (255, 201, 14), temp_pos)
-            temp_pos = (action_menu.get_width() + 20 + 178, self.height - selection_panel.get_height() + 86)
+            temp_pos = (self.action_menu_scaled.get_width() + 20 + 178, self.height - self.selection_panel_scaled.get_height() + 86)
             draw_text(screen, str(self.examined_tile.attack_dmg) + " - " + str(self.examined_tile.attack_dmg + 1),
                       12, (255, 255, 255), temp_pos)
 
@@ -791,19 +799,19 @@ class Hud:
                     building_built.construction_time * 1000) * progress_bar_length)
 
             pygame.draw.rect(screen, (255, 201, 14),
-                             (action_menu.get_width() + 350, self.height * 0.8 + 34, progress_displayed, 6))
+                             (self.action_menu_scaled.get_width() + 350, self.height * 0.8 + 34, progress_displayed, 6))
             pygame.draw.rect(screen, (25, 25, 25),
-                             (action_menu.get_width() + 350, self.height * 0.8 + 34, progress_bar_length, 6), 2)
+                             (self.action_menu_scaled.get_width() + 350, self.height * 0.8 + 34, progress_bar_length, 6), 2)
 
             temp_text = "Construction progress..."
-            draw_text(screen, temp_text, 13, (255, 255, 255), (action_menu.get_width() + 354, self.height * 0.8 + 17))
+            draw_text(screen, temp_text, 13, (255, 255, 255), (self.action_menu_scaled.get_width() + 354, self.height * 0.8 + 17))
 
             # progress_time in secs
             progress_time = ((building_built.now - building_built.resource_manager_cooldown) / 1000)
             progress_time_pourcent = progress_time * 100 / building_built.construction_time
             progress_text = str(floor(progress_time_pourcent)) + "%"
             draw_text(screen, progress_text, 12, (255, 255, 255),
-                      (action_menu.get_width() + 400, self.height * 0.8 + 42))
+                      (self.action_menu_scaled.get_width() + 400, self.height * 0.8 + 42))
 
         # no building_built, which means we have to display a training unit progress bar
         else:
@@ -827,16 +835,16 @@ class Hud:
             ratio = (progress_secs / max_progress) * 100
 
             pygame.draw.rect(screen, (255, 201, 14),
-                             (action_menu.get_width() + 350, self.height * 0.8 + 34, progress_displayed, 6))
+                             (self.action_menu_scaled.get_width() + 350, self.height * 0.8 + 34, progress_displayed, 6))
             pygame.draw.rect(screen, (55, 55, 55),
-                             (action_menu.get_width() + 350, self.height * 0.8 + 34, progress_bar_length, 6), 2)
+                             (self.action_menu_scaled.get_width() + 350, self.height * 0.8 + 34, progress_bar_length, 6), 2)
 
             temp_text = "Training a " + str_name + "..."
-            draw_text(screen, temp_text, 13, (255, 255, 255), (action_menu.get_width() + 354, self.height * 0.8 + 17))
+            draw_text(screen, temp_text, 13, (255, 255, 255), (self.action_menu_scaled.get_width() + 354, self.height * 0.8 + 17))
 
             # progress %
             health_text = str(int(ratio)) + "%"
-            draw_text(screen, health_text, 12, (255, 255, 255), (action_menu.get_width() + 400, self.height * 0.8 + 42))
+            draw_text(screen, health_text, 12, (255, 255, 255), (self.action_menu_scaled.get_width() + 400, self.height * 0.8 + 42))
 
             # icon and number of units being trained
             screen.blit(icon, self.trained_unit_icon_pos)
@@ -920,28 +928,28 @@ class Hud:
             entity = food_production_tech
 
         # display grey rectangle
-        screen.blit(self.tooltip_surface, (0, self.height - action_menu.get_height() - self.tooltip_rect.height))
+        screen.blit(self.tooltip_surface, (0, self.height - self.action_menu_scaled.get_height() - self.tooltip_rect.height))
         pygame.draw.rect(self.tooltip_surface, (255, 201, 14),
                          pygame.Rect(0, 0, self.tooltip_rect.width, self.tooltip_rect.height), 2)
 
         if display_tooltip_for_entity:
             # construction/training resources costs icons
-            screen.blit(wood_cost, (8, self.height - action_menu.get_height() - self.tooltip_rect.height + 30))
-            screen.blit(food_cost, (0 + 60, self.height - action_menu.get_height() - self.tooltip_rect.height + 30))
-            screen.blit(gold_cost, (0 + 115, self.height - action_menu.get_height() - self.tooltip_rect.height + 30))
-            screen.blit(stone_cost, (0 + 170, self.height - action_menu.get_height() - self.tooltip_rect.height + 30))
+            screen.blit(wood_cost, (8, self.height - self.action_menu_scaled.get_height() - self.tooltip_rect.height + 30))
+            screen.blit(food_cost, (0 + 60, self.height - self.action_menu_scaled.get_height() - self.tooltip_rect.height + 30))
+            screen.blit(gold_cost, (0 + 115, self.height - self.action_menu_scaled.get_height() - self.tooltip_rect.height + 30))
+            screen.blit(stone_cost, (0 + 170, self.height - self.action_menu_scaled.get_height() - self.tooltip_rect.height + 30))
             screen.blit(population_cost,
-                        (0 + 225, self.height - action_menu.get_height() - self.tooltip_rect.height + 30))
+                        (0 + 225, self.height - self.action_menu_scaled.get_height() - self.tooltip_rect.height + 30))
 
             # order text such as "train a villager" or "build xxx"
             tooltip_text = entity.construction_tooltip + " (" + str(entity.construction_time) + "s)"
             draw_text(screen, tooltip_text, 14, (255, 255, 255),
                       (self.tooltip_rect.topleft[0],
-                       self.height - action_menu.get_height() - self.tooltip_rect.height + 5))
+                       self.height - self.action_menu_scaled.get_height() - self.tooltip_rect.height + 5))
 
             # cost values. Displayed in red if not enough resources, else in gold
             display_color = "WHITE"
-            temp_pos = (30, self.height - action_menu.get_height() - self.tooltip_rect.height + 35)
+            temp_pos = (30, self.height - self.action_menu_scaled.get_height() - self.tooltip_rect.height + 35)
             # resources
             for resource_type in range(0, 4):
                 if entity.construction_cost[resource_type] > the_player.resources[resource_type]:
@@ -962,28 +970,28 @@ class Hud:
                       (self.tooltip_rect.topleft[0], temp_pos[1] + 30))
 
             # grey line
-            temp_pos = (7, self.height - action_menu.get_height() - self.tooltip_rect.height + 60)
+            temp_pos = (7, self.height - self.action_menu_scaled.get_height() - self.tooltip_rect.height + 60)
             pygame.draw.line(screen, (192, 192, 192), temp_pos,
                              (temp_pos[0] + self.tooltip_rect.width - 20, temp_pos[1]))
 
         elif display_tooltip_for_tech:
             # construction/training resources costs icons
-            screen.blit(wood_cost, (8, self.height - action_menu.get_height() - self.tooltip_rect.height + 30))
-            screen.blit(food_cost, (0 + 60, self.height - action_menu.get_height() - self.tooltip_rect.height + 30))
+            screen.blit(wood_cost, (8, self.height - self.action_menu_scaled.get_height() - self.tooltip_rect.height + 30))
+            screen.blit(food_cost, (0 + 60, self.height - self.action_menu_scaled.get_height() - self.tooltip_rect.height + 30))
             screen.blit(gold_cost,
-                        (0 + 115, self.height - action_menu.get_height() - self.tooltip_rect.height + 30))
+                        (0 + 115, self.height - self.action_menu_scaled.get_height() - self.tooltip_rect.height + 30))
             screen.blit(stone_cost,
-                        (0 + 170, self.height - action_menu.get_height() - self.tooltip_rect.height + 30))
+                        (0 + 170, self.height - self.action_menu_scaled.get_height() - self.tooltip_rect.height + 30))
 
             # order text such as "train a villager" or "build xxx"
             tooltip_text = entity.name + " (" + str(entity.research_time) + "s )"
             draw_text(screen, tooltip_text, 14, (255, 255, 255),
                       (self.tooltip_rect.topleft[0] + 5,
-                       self.height - action_menu.get_height() - self.tooltip_rect.height + 5))
+                       self.height - self.action_menu_scaled.get_height() - self.tooltip_rect.height + 5))
 
             # cost values. Displayed in red if not enough resources, else in gold
             display_color = "WHITE"
-            temp_pos = (30, self.height - action_menu.get_height() - self.tooltip_rect.height + 35)
+            temp_pos = (30, self.height - self.action_menu_scaled.get_height() - self.tooltip_rect.height + 35)
             # resources
             for resource_type in range(0, 4):
                 if entity.construction_costs[resource_type] > the_player.resources[resource_type]:
@@ -998,7 +1006,7 @@ class Hud:
                       (self.tooltip_rect.topleft[0], temp_pos[1] + 30))
 
             # grey line
-            temp_pos = (7, self.height - action_menu.get_height() - self.tooltip_rect.height + 60)
+            temp_pos = (7, self.height - self.action_menu_scaled.get_height() - self.tooltip_rect.height + 60)
             pygame.draw.line(screen, (192, 192, 192), temp_pos,
                              (temp_pos[0] + self.tooltip_rect.width - 20, temp_pos[1]))
 
@@ -1008,9 +1016,9 @@ class Hud:
             tooltip_text = entity["tooltip"]
             draw_text(screen, tooltip_text, 14, (255, 0, 0),
                       (self.tooltip_rect.topleft[0],
-                       self.height - action_menu.get_height() - self.tooltip_rect.height + 5))
+                       self.height - self.action_menu_scaled.get_height() - self.tooltip_rect.height + 5))
             # grey line
-            temp_pos = (7, self.height - action_menu.get_height() - self.tooltip_rect.height + 60)
+            temp_pos = (7, self.height - self.action_menu_scaled.get_height() - self.tooltip_rect.height + 60)
             pygame.draw.line(screen, (192, 192, 192), temp_pos,
                              (temp_pos[0] + self.tooltip_rect.width - 20, temp_pos[1]))
             # description

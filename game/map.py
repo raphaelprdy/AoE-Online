@@ -39,6 +39,8 @@ class Map:
         # self.fog = False
 
         self.map = self.create_map()
+        self.minimap_panel_width = scale_image(minimap_panel, h= 0.25*self.height).get_width()
+
         self.camera = None
         self.place_x = 0
         self.place_y = 0
@@ -756,15 +758,23 @@ class Map:
         """Draw a minimap so you dont get lost. Moving it to HUD or
         Camera is highly recommended, draw the polygon once so increase
         FPS. """
-        minimap_scaling = 16
+
+        offset_x = 0.0767*self.minimap_panel_width/2
+        offset_y = 0.0689*self.height*0.25/2
+
+        minimap_x = self.minimap_panel_width - offset_x*2
+        minimap_y = self.height*0.25 - offset_y*2
+
+        minimap_scaling = self.grass_tiles.get_width()/minimap_x
         ### Draw the camera on the map
         ### 420 and 200 is the size of minimap panel
+
         self.cam_width = self.width/minimap_scaling
         self.cam_height = self.height/minimap_scaling
 
         # iso_pos_cam = self.grid_to_iso_poly(camera.scroll.x , camera.scroll.y)
-        iso_pos_cam = [(-camera.scroll.x / minimap_scaling + self.width  - 420 ,
-                         -camera.scroll.y/ minimap_scaling + self.height - 200)]
+        iso_pos_cam = [(-camera.scroll.x / minimap_scaling + self.width - offset_x - minimap_x ,
+                         -camera.scroll.y/ minimap_scaling + self.height - minimap_y)]
         #For debugging purpose
 
         # for xh in iso_pos_cam:
@@ -779,8 +789,8 @@ class Map:
                 mini = self.map[x][y]["iso_poly"]
                 # mini = [((x + self.width / 2) / minimap_scaling + 1640,
                 #        (y + self.height / 4) / minimap_scaling + 820) for x, y in mini]  # position x + ...., y  + ...
-                mini = [((x) / minimap_scaling + self.width - 420 / 2,
-                         (y) / minimap_scaling + self.height - 200) for x, y in mini]
+                mini = [((x) / minimap_scaling + self.width - offset_x - minimap_x / 2,
+                         (y) / minimap_scaling + self.height - minimap_y) for x, y in mini]
                 # pygame.draw.polygon(screen, "WHITE", mini, 1)
 
                 # Draw small dot representing entities
@@ -799,14 +809,14 @@ class Map:
         for player in player_list:
             for building in player.building_list:
                 iso_pos = self.grid_to_iso_poly(building.pos[0], building.pos[1])
-                iso_pos = [((x) / minimap_scaling + self.width - 420 / 2,
-                         (y) / minimap_scaling + self.height - 200) for x, y in iso_pos]
+                iso_pos = [((x) / minimap_scaling + self.width - offset_x - minimap_x / 2,
+                         (y) / minimap_scaling + self.height -  minimap_y) for x, y in iso_pos]
                 pygame.draw.circle(screen, building.owner.color, (iso_pos[1][0], iso_pos[1][1]), 2)
                 # print(building.owner.color, iso_pos) Debug purpose
             for unit in player.unit_list:
                 unit_pos = self.grid_to_iso_poly(unit.pos[0], unit.pos[1])
-                unit_pos = [((x) / minimap_scaling + self.width - 420 / 2,
-                            (y) / minimap_scaling + self.height - 200) for x, y in unit_pos]
+                unit_pos = [((x) / minimap_scaling + self.width - offset_x - minimap_x / 2,
+                            (y) / minimap_scaling + self.height - minimap_y) for x, y in unit_pos]
                 pygame.draw.circle(screen, building.owner.color, (unit_pos[1][0], unit_pos[1][1]), 3)
 
     # display resources on map. Most resources have different variations. If resource is selected or has less than max health, we display its health bar
