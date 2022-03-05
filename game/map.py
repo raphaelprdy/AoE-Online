@@ -16,7 +16,7 @@ class Map:
     def __init__(self, hud, entities, grid_length_x, grid_length_y, width, height):
         self.hud = hud
         # 4 booleans for corners. each corner becomes true when a player occupies at the beginning of the game
-        self.corners = {"TOP_LEFT": False, "TOP_RIGHT": False, "BOTTOM_LEFT": False, "BOTTOM_RIGHT": False}
+        self.occupied_corners = {"TOP_LEFT": False, "TOP_RIGHT": False, "BOTTOM_LEFT": False, "BOTTOM_RIGHT": False}
         self.entities = entities
         self.grid_length_x = grid_length_x
         self.grid_length_y = grid_length_y
@@ -470,138 +470,140 @@ class Map:
                     collision_matrix[y][x] = 0
         return collision_matrix
 
-    # here is the OLD fonction that places the townhall randomly on the map
-    """def place_townhall(self, the_player=MAIN_PLAYER):
-        while not the_player.townhall_placed:
-            place_x = random.randint(0, self.grid_length_x - 2)
-            place_y = random.randint(1, self.grid_length_y - 1)
-
-            self.place_x = place_x
-            self.place_y = place_y
-
-            new_building = TownCenter((place_x, place_y), self, the_player)
-            new_building.is_being_built = False
-            new_building.construction_progress = 100
-            new_building.current_health = new_building.max_health
-            self.entities.append(new_building)
-            self.buildings[place_x][place_y] = new_building
-
-            the_player.townhall_placed = True
-
-            the_player.towncenter_pos = (place_x, place_y)
-            the_player.towncenter = new_building
-
-            self.map[place_x][place_y]["tile"] = "building"
-            self.map[place_x][place_y]["collision"] = True
-            self.collision_matrix[place_y][place_x] = 0
-            self.map[place_x + 1][place_y]["tile"] = "building"
-            self.map[place_x + 1][place_y]["collision"] = True
-            self.collision_matrix[place_y][place_x+1] = 0
-            self.map[place_x][place_y - 1]["tile"] = "building"
-            self.map[place_x][place_y - 1]["collision"] = True
-            self.collision_matrix[place_y-1][place_x] = 0
-            self.map[place_x + 1][place_y - 1]["tile"] = "building"
-            self.map[place_x + 1][place_y - 1]["collision"] = True
-            self.collision_matrix[place_y-1][place_x+1] = 0"""
-
-    # here is the fonction that randomly places a player's starting units 4 tiles from the corner
+    # here is the fonction that randomly places the player's starting units 4 tiles from a random map corner
     def place_starting_units(self, the_player=MAIN_PLAYER):
         """
 
         Args:
-            the_player: for which player are we placing the town center
+            the_player: ... for which player are we placing the town center; Makes sense right
 
         Returns: nothing
 
         """
 
-        townhall_placed = False
+        townhall_pos_determined = False
+        top_left_pos = (0, 0)
+        top_right_pos = (1, 0)
+        bottom_left_pos = (0, 1)
+        bottom_right_pos = (1, 1)
 
-        while not townhall_placed:
+        # TEST MODE should be disabled if we play a real game
+        if TEST_MODE:
+            #   Player 2 (blue, us) is always TOP_LEFT
+            if the_player == playerTwo:
+                place_x = 0
+                place_y = 0
+                self.occupied_corners["TOP_LEFT"] = True
+
+            #   Player 1 (red) is always TOP_RIGHT
+            elif the_player == playerOne:
+                place_x = 1
+                place_y = 0
+                self.occupied_corners["TOP_RIGHT"] = True
+
+            #   Player 3 (yellow) is always BOTTOM_RIGHT
+            elif the_player == playerThree:
+                place_x = 0
+                place_y = 1
+                self.occupied_corners["BOTTOM_LEFT"] = True
+
+            #to skip the random determination
+            townhall_pos_determined = True
+
+        # for real games (will be skipped if TEST_MODE is enabled):
+        while not townhall_pos_determined:
+            # We randomly determine which corner is assigned to the starting position.
             # (x : 0 if left, 1 if right ; y : 1 if bottom, 0 if top)
             place_x = random.randint(0, 1)
             place_y = random.randint(0, 1)
 
-            # TO TEST, should be disabled if we play a real game
-            if TEST_MODE or 1:
-                if the_player == playerTwo:
-                    place_x = 0
-                    place_y = 0
-                elif the_player == playerOne:
-                    place_x = 1
-                    place_y = 0
-                elif the_player == playerThree:
-                    place_x = 0
-                    place_y = 1
+            # the corner must not be occupied for starting units to be placed
+            if (place_x, place_y) == top_left_pos and not self.occupied_corners["TOP_LEFT"]:
+                # the corner becomes occupied, the town_center_position has been determined
+                self.occupied_corners["TOP_LEFT"] = True
+                townhall_pos_determined = True
+            elif (place_x, place_y) == top_right_pos and not self.occupied_corners["TOP_RIGHT"]:
+                self.occupied_corners["TOP_RIGHT"] = True
+                townhall_pos_determined = True
+            elif (place_x, place_y) == bottom_left_pos and not self.occupied_corners["BOTTOM_LEFT"]:
+                self.occupied_corners["BOTTOM_LEFT"] = True
+                townhall_pos_determined = True
+            elif (place_x, place_y) == bottom_right_pos and not self.occupied_corners["BOTTOM_RIGHT"]:
+                self.occupied_corners["BOTTOM_RIGHT"] = True
+                townhall_pos_determined = True
 
-            # top_left
-            if (place_x, place_y) == (0, 0):
-                # we remove stuff from the chosen corner
-                for x in range(2, 8):
-                    for y in range(2, 8):
-                        self.clear_tile(x, y)
-                # we place towncenter
-                new_building = TownCenter((4, 5), self, the_player)
-                # starting unit
-                start_unit = Villager(self.map[4][6]["grid"], the_player, self)
-                # starting unit. For debug reasons, we need a tuple and not a list (pathfinding)
-                vill_pos = tuple(self.map[4][6]["grid"])
-                the_player.side = "top"
+            #  else we try again (another iteration of while loop, x and y will hopefully change
+            else:
+                pass
+        # **************************************************
+        #once the corner has been chosen, we do the following:
 
-            # top_right
-            elif (place_x, place_y) == (1, 0):
-                # we remove stuff from the chosen corner
-                for x in range(self.grid_length_x - 8, self.grid_length_x - 2):
-                    for y in range(2, 8):
-                        self.clear_tile(x, y)
-                # we place towncenter
-                new_building = TownCenter((self.grid_length_x - 6, 5), self, the_player)
-                # starting unit
-                start_unit = Villager(self.map[self.grid_length_x - 6][6]["grid"], the_player, self)
-                # starting unit. For debug reasons, we need a tuple and not a list (pathfinding)
-                vill_pos = tuple(self.map[self.grid_length_x - 6][6]["grid"])
-                the_player.side = "right"
+        if (place_x, place_y) == top_left_pos:
+            # we remove stuff from the chosen corner
+            for x in range(2, 8):
+                for y in range(2, 8):
+                    self.clear_tile(x, y)
+            # we place towncenter
+            new_building = TownCenter((4, 5), self, the_player)
+            # starting unit
+            start_unit = Villager(self.map[4][6]["grid"], the_player, self)
+            # starting unit. For debug reasons, we need a tuple and not a list (pathfinding)
+            vill_pos = tuple(self.map[4][6]["grid"])
+            the_player.side = "top"
 
-            # bot_left
-            elif (place_x, place_y) == (0, 1):
-                # we remove stuff from the chosen corner
-                for x in range(2, 8):
-                    for y in range(self.grid_length_y - 8, self.grid_length_y - 2):
-                        self.clear_tile(x, y)
-                # we place towncenter
-                new_building = TownCenter((4, self.grid_length_y - 5), self, the_player)
-                # starting unit
-                start_unit = Villager(self.map[4][self.grid_length_y - 4]["grid"], the_player, self)
-                # starting unit. For debug reasons, we need a tuple and not a list (pathfinding)
-                vill_pos = tuple(self.map[4][self.grid_length_y - 4]["grid"])
-                the_player.side = "left"
+        # top_right
+        elif (place_x, place_y) == top_right_pos:
+            # we remove stuff from the chosen corner
+            for x in range(self.grid_length_x - 8, self.grid_length_x - 2):
+                for y in range(2, 8):
+                    self.clear_tile(x, y)
+            # we place towncenter
+            new_building = TownCenter((self.grid_length_x - 6, 5), self, the_player)
+            # starting unit
+            start_unit = Villager(self.map[self.grid_length_x - 6][6]["grid"], the_player, self)
+            # starting unit. For debug reasons, we need a tuple and not a list (pathfinding)
+            vill_pos = tuple(self.map[self.grid_length_x - 6][6]["grid"])
+            the_player.side = "right"
 
-            # bot_right
-            elif (place_x, place_y) == (1, 1):
-                # we remove stuff from the chosen corner
-                for x in range(self.grid_length_x - 8, self.grid_length_x - 2):
-                    for y in range(self.grid_length_y - 8, self.grid_length_y - 2):
-                        self.clear_tile(x, y)
-                # we place towncenter
-                new_building = TownCenter((self.grid_length_x - 6, self.grid_length_y - 5), self, the_player)
-                # starting unit
-                start_unit = Villager(self.map[self.grid_length_x - 6][self.grid_length_y - 4]["grid"], the_player,
-                                      self)
-                # starting unit. For debug reasons, we need a tuple and not a list (pathfinding)
-                vill_pos = tuple(self.map[self.grid_length_x - 6][self.grid_length_y - 4]["grid"])
-                the_player.side = "bot"
+        # bot_left
+        elif (place_x, place_y) == bottom_left_pos:
+            # we remove stuff from the chosen corner
+            for x in range(2, 8):
+                for y in range(self.grid_length_y - 8, self.grid_length_y - 2):
+                    self.clear_tile(x, y)
+            # we place towncenter
+            new_building = TownCenter((4, self.grid_length_y - 5), self, the_player)
+            # starting unit
+            start_unit = Villager(self.map[4][self.grid_length_y - 4]["grid"], the_player, self)
+            # starting unit. For debug reasons, we need a tuple and not a list (pathfinding)
+            vill_pos = tuple(self.map[4][self.grid_length_y - 4]["grid"])
+            the_player.side = "left"
 
-            # for towncenter
-            new_building.is_being_built = False
-            new_building.construction_progress = 100
-            new_building.current_health = new_building.max_health
+        # bot_right
+        elif (place_x, place_y) == bottom_right_pos:
+            # we remove stuff from the chosen corner
+            for x in range(self.grid_length_x - 8, self.grid_length_x - 2):
+                for y in range(self.grid_length_y - 8, self.grid_length_y - 2):
+                    self.clear_tile(x, y)
+            # we place towncenter
+            new_building = TownCenter((self.grid_length_x - 6, self.grid_length_y - 5), self, the_player)
+            # starting unit
+            start_unit = Villager(self.map[self.grid_length_x - 6][self.grid_length_y - 4]["grid"], the_player,
+                                  self)
+            # starting unit. For debug reasons, we need a tuple and not a list (pathfinding)
+            vill_pos = tuple(self.map[self.grid_length_x - 6][self.grid_length_y - 4]["grid"])
+            the_player.side = "bot"
 
-            townhall_placed = True
-            the_player.towncenter_pos = new_building.pos
-            the_player.towncenter = new_building
+        # similar actions wherever the starting units were placed
+        # for towncenter
+        new_building.is_being_built = False
+        new_building.construction_progress = 100
+        new_building.current_health = new_building.max_health
+        the_player.towncenter_pos = new_building.pos
+        the_player.towncenter = new_building
 
-            # for starting villagers
-            the_player.pay_entity_cost_bis(Villager)
+        # for starting villager : we increase food pop (only) for the player owning him
+        the_player.pay_entity_cost_bis(Villager)
 
     def remove_entity(self, entity, scroll):
         """
