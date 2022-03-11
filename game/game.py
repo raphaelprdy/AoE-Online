@@ -7,6 +7,8 @@ from .animation import *
 from.new_AI import new_AI
 from time import sleep
 
+from Serialisation import *
+
 
 class Game:
     def __init__(self, screen, clock):
@@ -138,6 +140,11 @@ class Game:
                         # Quit game if chat wasnt activated
                         pygame.quit()
                         sys.exit()
+
+                    elif event.key == pygame.K_LCTRL:
+                        action = form_action(MAIN_PLAYER.name, "research", "Advance to Feudal Age")
+                        print(action)
+                        trad_action(action)
 
                     # Enable - Disable health bars
                     elif event.key == pygame.K_LALT or event.key == pygame.K_RALT:

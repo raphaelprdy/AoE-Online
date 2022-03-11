@@ -236,3 +236,10 @@ def str_to_entity_class(name: str):
         return Wall
     elif name == "Market":
         return Market
+
+
+def name_to_player(player_name):
+    for p in player_list:
+        if p.name == player_name:
+            return p
+    return None
