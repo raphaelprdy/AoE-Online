@@ -1,5 +1,6 @@
 import pygame
 from settings import MAP_SIZE_X, MAP_SIZE_Y
+from player import player_list
 
 RESSOURCE_LIST = ["wood", "food", "gold", "stone"]
 
@@ -316,3 +317,9 @@ def get_angle_between(origin_tile_pos: [int, int], end_tile_pos: [int, int]):
     angle = angle + 45
 
     return angle
+
+def name_to_player(player_name):
+    for p in player_list:
+        if p.name == player_name:
+            return p
+    return None
