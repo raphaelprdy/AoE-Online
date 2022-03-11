@@ -3,10 +3,10 @@ from player import *
 """
 player action(ressource / unit / building)(with+unit) (to+tile):
 - playerOne gather  resource unit
-- playerOne build building unit1 pos_x pos_y
-- playerOne research tech1                  *
+- playerOne build building unit1 pos_x pos_y  *
+- playerOne research tech1                    *
 - playerOne attack enemy_unit unit
-- playerOne move unit pos
+- playerOne move unit pos_x pos_y             *
 - playerOne train unit
 - playerOne spawn
 """
@@ -45,29 +45,40 @@ def trad_action(action):
             if words[2] and words[4]:
                 pass
                 #words[4].gather(...)
+
         elif words[1] == "spawn":
             pass
             #TODO
+
         elif words[1] == "build":
             if words[2] and words[3] and words [4] and words[5]:
                 #working_villager.go_to_build(grid_pos, self.hud.selected_tile["name"])
                 villager = number_to_unit(int(words[3]), player)
                 pos = (int(words[4]), int(words[5]))
                 villager.go_to_build(pos, words[2])
+
         elif words[1] == "research":
             if words[2]:
                 player.towncenter.research_tech(words[2])
+
         elif words[1] == "attack":
             pass
             #TODO
+
         elif words[1] == "move":
-            pass
-            #TODO
+            if words[2] and words[3] and words[4]:
+                print(words[2], words[3], words[4])
+                unit = number_to_unit(int(words[2]), player)
+                pos = (int(words[3]), int(words[4]))
+                unit.move_to(pos)
+                #TODO (not finished)
+
         elif words[1] == "train":
             if words[2]:
                 pass
                 #TODO
                 #player.towncenter.train()
+
         else:
             pass
             #TODO

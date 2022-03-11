@@ -145,7 +145,9 @@ class Game:
                         pos_x = MAIN_PLAYER.towncenter_pos[0] + 1
                         pos_y = MAIN_PLAYER.towncenter_pos[1] + 2
 
-                        action = form_action(MAIN_PLAYER.name, "build", "Tower", 0, pos_x, pos_y)
+                        #action = form_action(player_name=MAIN_PLAYER.name, action="move", unit=0, pos_x=pos_x, pos_y=pos_y) #move doesnt work currently
+                        action = form_action(player_name=MAIN_PLAYER.name, action="build", entity="Tower", unit=0, pos_x=pos_x, pos_y=pos_y)
+                        #action = form_action(player_name=MAIN_PLAYER.name, action="research", entity="Advance to Feudal Age")
                         print(action)
                         trad_action(action)
 
