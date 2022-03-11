@@ -55,7 +55,7 @@ def fonction_menu_principal() :
     newgame=Button(fen1, text='New Game', bg="gray", width=15, height=1, font='arial', command=lambda: Nouvelpartie(fen1,swidth,sheight))
     newgame.place(x=swidth*0.14, y=sheight*.5)
 
-    option=Button(fen1, text='Option', bg="gray", width=15, height=1, font='arial', )
+    option=Button(fen1, text='Multiplayer', bg="gray", width=15, height=1, font='arial',command=lambda: Multiplayer(fen1,swidth,sheight) )
     option.place(x=swidth*0.14, y=sheight*.55)
 
     exit=Button(fen1, text='Quit', bg="gray", width=15, height=1, font='arial', command=lambda: fen1.destroy())
@@ -159,6 +159,27 @@ def Nouvelpartie(fen,w,h):
     confirmer.place(x=w*.605, y=h*.86)
     
     fen2.mainloop()
+
+def Multiplayer(fen,w,h):
+    fen.destroy()
+    fen3=Tk()
+    fen3.title("Setting")
+    fen3.attributes('-fullscreen')
+    fen3.resizable(width=False,height=False)
+  
+    graphe3=Canvas(fen3, width=w, height=h,bg="white")
+    img = PhotoImage(file="resources\imagemenu\campaign.png").zoom(1,1)
+    graphe3.create_image(w/2,h/2, image=img)
+
+    img3 = PhotoImage(file="resources\imagemenu\multipanel.png")
+    
+    graphe3.create_image(w*0.5,h*.47, image=img3)
+
+    graphe3.pack()
+    game=Button(fen3,text='Rejoindre', bg="burlywood4", width=44, height=1, font='arial',)
+    game.place(x=w*.39, y=h*.47)
+
+    fen3.mainloop()
 
 
 def fonction_jeu(fen):
