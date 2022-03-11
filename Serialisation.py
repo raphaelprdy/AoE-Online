@@ -3,7 +3,7 @@ from player import *
 """
 player action(ressource / unit / building)(with+unit) (to+tile):
 - playerOne gather  resource unit
-- playerOne build building unit1 pos
+- playerOne build building unit1 pos_x pos_y
 - playerOne research tech1                  *
 - playerOne attack enemy_unit unit
 - playerOne move unit pos
@@ -26,9 +26,11 @@ def form_action(player_name, action, entity=None, unit=None, pos_x=None, pos_y=N
         serialised_string += "*"
         serialised_string += str(unit)
 
-    if tile is not None:
+    if pos_x is not None and pos_y is not None:
         serialised_string += "*"
-        serialised_string += str(pos)
+        serialised_string += str(pos_x)
+        serialised_string += "*"
+        serialised_string += str(pos_y)
 
     return serialised_string
 

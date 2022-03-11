@@ -142,7 +142,10 @@ class Game:
                         sys.exit()
 
                     elif event.key == pygame.K_LCTRL:
-                        action = form_action(MAIN_PLAYER.name, "research", "Advance to Feudal Age")
+                        pos_x = MAIN_PLAYER.towncenter_pos[0] + 1
+                        pos_y = MAIN_PLAYER.towncenter_pos[1] + 2
+
+                        action = form_action(MAIN_PLAYER.name, "build", "Tower", 0, pos_x, pos_y)
                         print(action)
                         trad_action(action)
 
