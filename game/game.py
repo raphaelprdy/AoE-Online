@@ -199,9 +199,11 @@ class Game:
                                                 or button["name"] == "Research Iron Horseshoes" \
                                                 or button["name"] == "Research Super Cows":
                                             entity.research_tech(button["name"])
+                                            form_action(PlayerOne, "research", button["name"])
                                         # else it is a building
                                         else:
                                             self.hud.selected_tile = button
+
 
                     #to have informations about the villager if he is selected
                     if type(entity) == Villager:

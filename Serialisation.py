@@ -8,12 +8,13 @@ player action(ressource / unit / building)(with+unit) (to+tile):
 - playerOne move unit1 to tile1
 """
 
+
 def form_action(player, action, entity=None, unit=None, tile=None):
     action += str(player)
     action += " "
     action += str(action)
 
-    if object is not None:
+    if entity is not None:
         action += " "
         action += str(object)
 
@@ -34,8 +35,23 @@ def form_action(player, action, entity=None, unit=None, tile=None):
 
 def trad_action(action):
     words = action.split()
+    if words[0] in playerList:
+        if words[1] == "gather":
+            if words[0] and words[2] and words[4]:
+                pass
+                #words[4].gather(...)
+        elif words[1] == "research":
+            pass
+        elif words[1] == "build":
+            pass
+        elif words[1] == "changeAge":
+            pass
+        elif words[1] == "attack":
+            pass
+        elif words[1] == "move":
+            pass
+        else:
+            #envoyer "commande
+            pass
 
-    if words[1] == gather:
-        if words[0] and words[2] and words[4]:
-            words[4].gather(...)
 
