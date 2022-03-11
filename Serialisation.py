@@ -51,7 +51,7 @@ def trad_action(action):
         elif words[1] == "move":
             pass
         else:
-            #envoyer "commande
+            #envoyer "commande corrompue"
             pass
 
 
