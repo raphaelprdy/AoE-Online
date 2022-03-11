@@ -236,3 +236,5 @@ def str_to_entity_class(name: str):
         return Wall
     elif name == "Market":
         return Market
+
+
