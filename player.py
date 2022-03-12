@@ -202,10 +202,10 @@ class Player:
 playerOne = Player("Lucien", True, [4000, 1000, 1000, 2000], color="BLUE")
 playerOne.age = 1
 
-playerTwo = Player("AI", True, [4000, 1000, 1000, 2000], color="RED")
+playerTwo = Player("AI1", True, [4000, 1000, 1000, 2000], color="RED")
 playerTwo.age = 1
 
-playerThree = Player("AI", True, [4000, 1000, 1000, 2000], color="YELLOW")
+playerThree = Player("AI2", True, [4000, 1000, 1000, 2000], color="YELLOW")
 playerThree.age = 1
 
 player_list = [playerOne, playerTwo, playerThree]

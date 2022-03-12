@@ -53,7 +53,7 @@ def serialize(player_name: str, action: str, entity=None, triggering_unit=None, 
 
 # transforms a str created with the serialize method to the corresponding in-game action
 # Mainly used to receive actions from other players in multiplayer games into your local version of the map.
-def deserialize(action: str, world=None):
+def deserialize(action: str, world=None) -> int:
     """
         Args:
             action: (string) une séquence de mots clés décrivant l’action à sérialiser; chaque mot clé est séparé
@@ -61,7 +61,7 @@ def deserialize(action: str, world=None):
             world: la map locale sur laquelle appliquer l action
 
         Returns: 0 si l action a été implémentée avec succès sur la map. -1 autrement (data transmises sans doute
-        corrompu)
+        corrompues)
     """
     words = action.split('*')
 
@@ -74,12 +74,16 @@ def deserialize(action: str, world=None):
                 pass
                 # words[4].gather(...)
 
-        # playerOne*spawn*TownCenter*(2,2)
-        # self, pos, map, player_owner_of_unit
-        # informations à communiquer : présence d'un townCenter à x,y ; corners disponibles
+        # playerOne*spawn*pos_x*pox_y
+        # utilisé pour communiquer l emplacement de départ d un joueur
         elif words[1] == "spawn":
-            if words[2] and words[3]:
-                ...
+            if words[2] and words[3] and world:
+                corner_pos_x = int(words[2])
+                corner_pos_y = int(words[3])
+                world.place_starting_units(player, (corner_pos_x, corner_pos_y))
+                return 0
+            else:
+                return -1
 
         elif words[1] == "build":
             if words[2] and words[3] and words[4] and words[5]:
