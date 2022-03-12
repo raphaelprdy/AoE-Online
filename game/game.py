@@ -153,7 +153,7 @@ class Game:
                         for x in range (0,50):
                             for y in range (0,50):
                                 pseudo_serialize = ("Lucien*clear*"+str(x)+"*"+str(y))
-                                if deserialize(pseudo_serialize, world=self.map):
+                                if not deserialize(pseudo_serialize, world=self.map):
                                     print("Deserialization clear succès")
                                 else:
                                     print("Code deserialize :" + "ECHEC deserialisation: action corrompue\n")

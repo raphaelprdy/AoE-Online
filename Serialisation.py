@@ -8,7 +8,7 @@ player action(ressource / unit / building)(with+unit) (to+tile):
 - playerOne attack enemy_unit unit
 - playerOne move unit pos_x pos_y             *
 - playerOne train unit
-- playerOne spawn unit_type pos_x pos_y
+- playerOne spawn pos_x pos_y
 - playerOne clear pos_x pos_y
 """
 
@@ -82,6 +82,7 @@ def deserialize(action: str, world=None) -> int:
                 corner_pos_y = int(words[3])
                 world.place_starting_units(player, (corner_pos_x, corner_pos_y))
                 return 0
+            # la commande n'a pas été reconnue ou des mots clés manquent; PANIC
             else:
                 return -1
 
