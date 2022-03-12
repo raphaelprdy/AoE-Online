@@ -54,6 +54,14 @@ class Hud:
         self.tech_tree_button_surface = pygame.Surface((tech_tree_icon.get_width(), tech_tree_icon.get_height()), pygame.SRCALPHA)
         self.tech_tree_rect = self.tech_tree_button_surface.get_rect(topleft=(screen.get_size()[0] - tech_tree_icon.get_width() - 5, age_panel.get_height() + 10))
 
+        #optimize
+        self.optimize_button_icon = pygame.image.load("resources/assets/icons/optimize.png").convert_alpha()
+        self.optimize_button_surface = pygame.Surface((self.optimize_button_icon.get_width(), self.optimize_button_icon.get_height()), pygame.SRCALPHA)
+        self.optimize_button_rect = self.optimize_button_surface.get_rect(
+            topleft=(screen.get_size()[0] - tech_tree_icon.get_width() - 5, age_panel.get_height() + 15 + self.optimize_button_icon.get_height()))
+
+        self.minimap_enabled = True
+
         #action_panel for all units/buildings
         self.images = self.load_buildings_icons()
         self.town_hall_panel = self.create_train_menu_town_hall()
@@ -97,6 +105,7 @@ class Hud:
         self.boom_sprites = load_images_better("resources/assets/Boom")
         self.boom_animation = BoomAnimation(self.boom_sprites)
         self.boom_animation_group.add(self.boom_animation)
+
         #dragon
         self.dragon_sprites = self.load_dragon_sprites()
 
@@ -397,9 +406,9 @@ class Hud:
         mouse_pos = pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]
         # entity is string corresponding to class unit/building name
         for entity in self.death_animations:
-                if not isinstance(entity, Dragon) and self.death_animations[entity]["animation"].to_be_played:
-                    self.death_animations[entity]["group"].draw(screen)
-                    self.death_animations[entity]["animation"].update()
+            if not isinstance(entity, Dragon) and self.death_animations[entity]["animation"].to_be_played:
+                self.death_animations[entity]["group"].draw(screen)
+                self.death_animations[entity]["animation"].update()
 
         for player in player_list:
             for unit in player.unit_list:
@@ -413,12 +422,15 @@ class Hud:
         # resources bar
         the_player.update_resources_bar(screen)
         # bottom menu
+        screen.blit(self.optimize_button_icon, (screen.get_size()[0] - tech_tree_icon.get_width() , age_panel.get_height() + 15 + self.optimize_button_icon.get_height()))
 
         if self.examined_tile is not None:
             # Draw minimap
+
             screen.blit(self.minimap_panel_scaled,
-                        (self.width - self.minimap_panel_scaled.get_width(), self.height - self.selection_panel_scaled.get_height()))
-            map.draw_minimap(screen, self.camera)
+                            (self.width - self.minimap_panel_scaled.get_width(), self.height - self.selection_panel_scaled.get_height()))
+            if self.minimap_enabled:
+                map.draw_minimap(screen, self.camera)
             screen.blit(self.action_menu_scaled, (0, self.height - self.action_menu_scaled.get_height()))
             screen.blit(self.selection_panel_scaled, (self.action_menu_scaled.get_width(), self.height - self.selection_panel_scaled.get_height()))
 
@@ -514,11 +526,10 @@ class Hud:
             "Masonry": masonry
         }
         return images
+
     #list of disabled icons. 0,1,2 for masonry, 3,4,5 for swords, 6,7,8 for armor
     def load_tech_icons_disabled(self):
         return load_images_better("resources/assets/icons/tech/disabled")
-
-
 
     # display life of entity inside mid bottom menu (when examining smth)
     # if below 25 pourcent, life bar in red, 25-40 : orange , 40-60 : yellow, 60-100 : light or dark green

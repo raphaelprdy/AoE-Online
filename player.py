@@ -110,7 +110,6 @@ class Player:
     def defeat(self):
         print(self.name, " has been defeated...")
 
-
     def victory(self):
         print(self.name, " has won !!!")
 
@@ -214,6 +213,7 @@ player_list = [playerOne, playerTwo, playerThree]
 
 #define which player is controlled by us
 MAIN_PLAYER = playerOne
+
 
 def str_to_entity_class(name: str):
     if name == "TownCenter":

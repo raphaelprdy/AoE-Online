@@ -207,7 +207,6 @@ class TownCenter(Building):
         for resource_type in range(0, 3):
             self.owner.resources[resource_type] -= tech.construction_costs[resource_type]
 
-
     def train(self, unit_type):
         self.queue += 1
         # if the town center is not working

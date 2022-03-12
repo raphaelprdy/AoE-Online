@@ -128,8 +128,6 @@ class Game:
                                 u.current_health *= 10
                             self.chat_text = "CHEAT CODE ACTIVATED : DESTROY"
 
-
-
                     # we store the letter
                     else:
                         self.chat_text += event.unicode
@@ -144,12 +142,21 @@ class Game:
                     elif event.key == pygame.K_LCTRL:
                         pos_x = MAIN_PLAYER.towncenter_pos[0] + 1
                         pos_y = MAIN_PLAYER.towncenter_pos[1] + 2
-
+                        # FORM ACTION a changé de nom : deserialize
                         #action = form_action(player_name=MAIN_PLAYER.name, action="move", unit=0, pos_x=pos_x, pos_y=pos_y) #move doesnt work currently
-                        action = form_action(player_name=MAIN_PLAYER.name, action="build", entity="Tower", unit=0, pos_x=pos_x, pos_y=pos_y)
+                        action = serialize(player_name=MAIN_PLAYER.name, action="build", entity="Tower", triggering_unit=0, pos_x=pos_x, pos_y=pos_y)
                         #action = form_action(player_name=MAIN_PLAYER.name, action="research", entity="Advance to Feudal Age")
                         print(action)
-                        trad_action(action)
+                        deserialize(action)
+
+                    elif event.key == pygame.K_LALT:
+                        for x in range (0,50):
+                            for y in range (0,50):
+                                pseudo_serialize = ("Lucien*clear*"+str(x)+"*"+str(y))
+                                if deserialize(pseudo_serialize, world=self.map):
+                                    print("Deserialization clear succès")
+                                else:
+                                    print("Code deserialize :" + "ECHEC deserialisation: action corrompue\n")
 
                     # Enable - Disable health bars
                     elif event.key == pygame.K_LALT or event.key == pygame.K_RALT:
@@ -167,6 +174,10 @@ class Game:
                 if event.button == 1:
                     if self.map.hud.tech_tree_rect.collidepoint(mouse_pos):
                         self.map.hud.tech_tree_display_flag = False if self.map.hud.tech_tree_display_flag else True
+
+                    elif self.map.hud.optimize_button_rect.collidepoint(mouse_pos):
+                        print("TEST BUTTON")
+                        self.map.hud.minimap_enabled = False if self.map.hud.minimap_enabled else True
 
                 # if we left click on the action panel and a building/unit is selected
                 if self.hud.bottom_left_menu is not None and self.map.hud.examined_tile is not None:
@@ -211,7 +222,7 @@ class Game:
                                                 or button["name"] == "Research Iron Horseshoes" \
                                                 or button["name"] == "Research Super Cows":
                                             entity.research_tech(button["name"])
-                                            form_action(PlayerOne, "research", button["name"])
+                                            serialize(PlayerOne, "research", button["name"])
                                         # else it is a building
                                         else:
                                             self.hud.selected_tile = button
