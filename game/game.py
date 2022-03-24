@@ -143,11 +143,11 @@ class Game:
                         pos_x = MAIN_PLAYER.towncenter_pos[0] + 1
                         pos_y = MAIN_PLAYER.towncenter_pos[1] + 2
                         # FORM ACTION a changé de nom : deserialize
-                        #action = form_action(player_name=MAIN_PLAYER.name, action="move", unit=0, pos_x=pos_x, pos_y=pos_y) #move doesnt work currently
+                        #action = serialize(player_name=MAIN_PLAYER.name, action="move", triggering_unit=0, pos_x=pos_x, pos_y=pos_y) #move doesnt work currently
                         action = serialize(player_name=MAIN_PLAYER.name, action="build", entity="Tower", triggering_unit=0, pos_x=pos_x, pos_y=pos_y)
-                        #action = form_action(player_name=MAIN_PLAYER.name, action="research", entity="Advance to Feudal Age")
+                        #action = serialize(player_name=MAIN_PLAYER.name, action="research", entity="Advance to Feudal Age")
                         print(action)
-                        deserialize(action)
+                        deserialize(action, self.map)
 
                     elif event.key == pygame.K_LALT:
                         for x in range (0,50):
@@ -159,7 +159,7 @@ class Game:
                                     print("Code deserialize :" + "ECHEC deserialisation: action corrompue\n")
 
                     # Enable - Disable health bars
-                    elif event.key == pygame.K_LALT or event.key == pygame.K_RALT:
+                    elif event.key == pygame.K_RALT:
                         global ENABLE_HEALTH_BARS
                         ENABLE_HEALTH_BARS = not ENABLE_HEALTH_BARS
 

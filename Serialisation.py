@@ -86,28 +86,39 @@ def deserialize(action: str, world=None) -> int:
             else:
                 return -1
 
+        # build fait en sorte qu'un villageois passé en paramètre aille construire un batiment passé en paramètre sur
+        # une tile passée en paramètre
         elif words[1] == "build":
             if words[2] and words[3] and words[4] and words[5]:
-                # working_villager.go_to_build(grid_pos, self.hud.selected_tile["name"])
+
                 villager = number_to_unit(int(words[3]), player)
                 pos = (int(words[4]), int(words[5]))
                 villager.go_to_build(pos, words[2])
+                return 0
+            else:
+                return -1
 
+        # research permet de rechercher une technologie passée en paramètre, ou de passer d'âge
         elif words[1] == "research":
             if words[2]:
                 player.towncenter.research_tech(words[2])
+                return 0
+            else:
+                return -1
 
         elif words[1] == "attack":
             pass
             # TODO
 
+        #move fait en sorte qu'un villageois bouge vers la tile dont on a passé les coordonnés en paramètre
         elif words[1] == "move":
             if words[2] and words[3] and words[4]:
-                print(words[2], words[3], words[4])
                 unit = number_to_unit(int(words[2]), player)
                 pos = (int(words[3]), int(words[4]))
-                unit.move_to(pos)
-                # TODO (not finished)
+                unit.move_to(world.map[pos[0]][pos[1]])
+                return 0
+            else:
+                return -1
 
         elif words[1] == "train":
             if words[2]:
