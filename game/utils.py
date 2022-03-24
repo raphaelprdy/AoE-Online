@@ -410,3 +410,11 @@ def is_verified(str_map):
             column_checksum += ord(str_map[char][line + offset + 1])
         if str(line_checksum) != curr_line[2] or str(column_checksum) != curr_line[3]:
             print("WRONG CHECKSUM")
+
+
+def unit_to_list_index(unit):
+    index = 0
+    for u in unit.owner.unit_list:
+        if u == unit:
+            return index
+        index += 1

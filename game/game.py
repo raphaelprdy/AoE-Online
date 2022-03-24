@@ -1,6 +1,6 @@
 from .camera import Camera
 from .map import *
-from .utils import draw_text, find_owner, IA_MODE, MULTIPLAYER_MODE
+from .utils import draw_text, find_owner, IA_MODE, MULTIPLAYER_MODE, unit_to_list_index
 from .hud import Hud
 from .animation import *
 #from .AI import AI
@@ -380,7 +380,7 @@ class Game:
                     if type(entity) == Villager:
                         this_villager = self.map.units[entity.pos[0]][entity.pos[1]]
                         #("Info about villager, print is in game, events")
-                        this_villager.print_state()
+                        #this_villager.print_state()
 
                 #BOOM WHEN RIGHT CLICKING
                 if event.button == 3:  # RIGHT CLICK
@@ -431,6 +431,13 @@ class Game:
                                          this_villager.stack_type == self.map.map[pos_x][pos_y]["tile"]):
 
                                     this_villager.go_to_ressource((pos_x, pos_y))
+                                    if MULTIPLAYER_MODE:
+                                        index = unit_to_list_index(this_villager)
+                                        action = serialize(player_name=this_villager.owner.name, action="gather",
+                                                           triggering_unit=index, pos_x=pos_x, pos_y=pos_y)
+                                        print(action)
+
+
 
                                 if isinstance(this_villager, Villager) and this_villager.gathered_ressource_stack >= this_villager.stack_max \
                                         or (this_villager.owner.towncenter.pos[0] <= pos_x <=
