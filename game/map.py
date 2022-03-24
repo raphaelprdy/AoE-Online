@@ -194,6 +194,11 @@ class Map:
                             self.hud.selected_tile["name"] == "TownCenter" or \
                             self.hud.selected_tile["name"] == "Barracks" or self.hud.selected_tile["name"] == "Tower" or self.hud.selected_tile["name"] == "Wall"or self.hud.selected_tile["name"] == "Market":
                         working_villager.go_to_build(grid_pos, self.hud.selected_tile["name"])
+                        if MULTIPLAYER_MODE:
+                            index = unit_to_list_index(this_villager)
+                            action = serialize(player_name=this_villager.owner.name, action="build",
+                                               entity=self.hud.selected_tile["name"], triggering_unit=index, pos_x=pos_x, pos_y=pos_y)
+                            print(action)
                     self.hud.selected_tile = None
 
         # the player hasn't selected something to build, we check if he selected a building/unit

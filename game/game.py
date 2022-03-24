@@ -407,19 +407,41 @@ class Game:
                                         and not this_villager.owner == find_owner([pos_x, pos_y]):
                                     # attack !
                                     this_villager.go_to_attack((pos_x, pos_y))
+                                    if MULTIPLAYER_MODE:
+                                        index = unit_to_list_index(this_villager)
+                                        action = serialize(player_name=this_villager.owner.name, action="attack",
+                                                           triggering_unit=index, pos_x=pos_x, pos_y=pos_y)
+                                        print(action)
 
                                 # ONLY MOVEMENT
                                 if isinstance(this_villager, Villager) and self.map.collision_matrix[grid_pos[1]][grid_pos[0]] and \
                                         not this_villager.is_gathering and this_villager.targeted_ressource is None and \
                                         not this_villager.is_attacking:
                                     this_villager.move_to(self.map.map[grid_pos[0]][grid_pos[1]])
+                                    if MULTIPLAYER_MODE:
+                                        index = unit_to_list_index(this_villager)
+                                        action = serialize(player_name=this_villager.owner.name, action="move",
+                                                           triggering_unit=index, pos_x=pos_x, pos_y=pos_y)
+                                        print(action)
+
                                 elif isinstance(this_villager, Clubman) and self.map.collision_matrix[grid_pos[1]][grid_pos[0]] and \
                                         not this_villager.is_attacking:
                                     this_villager.move_to(self.map.map[grid_pos[0]][grid_pos[1]])
+                                    if MULTIPLAYER_MODE:
+                                        index = unit_to_list_index(this_villager)
+                                        action = serialize(player_name=this_villager.owner.name, action="move",
+                                                           triggering_unit=index, pos_x=pos_x, pos_y=pos_y)
+                                        print(action)
+
                                 elif isinstance(this_villager, Dragon) and self.map.collision_matrix[grid_pos[1]][
                                     grid_pos[0]] and \
                                      not this_villager.is_attacking:
                                     this_villager.move_to(self.map.map[grid_pos[0]][grid_pos[1]])
+                                    if MULTIPLAYER_MODE:
+                                        index = unit_to_list_index(this_villager)
+                                        action = serialize(player_name=this_villager.owner.name, action="move",
+                                                           triggering_unit=index, pos_x=pos_x, pos_y=pos_y)
+                                        print(action)
 
                                 # we check if the tile we right click on is a ressource and if its on an adjacent tile of
                                 # the villager pos, and if the villager isnt moving if the tile next to him is a ressource
