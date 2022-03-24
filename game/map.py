@@ -11,6 +11,8 @@ from settings import *
 from player import playerOne, playerTwo, playerThree, player_list, MAIN_PLAYER
 from units import Villager, Unit, Farm, TownCenter, House, Building, Barracks, Clubman, Dragon, Tower, Wall, Market
 
+from Serialisation import *
+
 
 class Map:
     def __init__(self, hud, entities, grid_length_x, grid_length_y, width, height, string_map = None):
@@ -195,8 +197,10 @@ class Map:
                             self.hud.selected_tile["name"] == "Barracks" or self.hud.selected_tile["name"] == "Tower" or self.hud.selected_tile["name"] == "Wall"or self.hud.selected_tile["name"] == "Market":
                         working_villager.go_to_build(grid_pos, self.hud.selected_tile["name"])
                         if MULTIPLAYER_MODE:
-                            index = unit_to_list_index(this_villager)
-                            action = serialize(player_name=this_villager.owner.name, action="build",
+                            index = unit_to_list_index(working_villager)
+                            pos_x = grid_pos[0]
+                            pos_y = grid_pos[1]
+                            action = serialize(player_name=working_villager.owner.name, action="build",
                                                entity=self.hud.selected_tile["name"], triggering_unit=index, pos_x=pos_x, pos_y=pos_y)
                             print(action)
                     self.hud.selected_tile = None

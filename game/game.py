@@ -421,7 +421,7 @@ class Game:
                                     if MULTIPLAYER_MODE:
                                         index = unit_to_list_index(this_villager)
                                         action = serialize(player_name=this_villager.owner.name, action="move",
-                                                           triggering_unit=index, pos_x=pos_x, pos_y=pos_y)
+                                                           triggering_unit=index, pos_x=grid_pos[0], pos_y=grid_pos[1])
                                         print(action)
 
                                 elif isinstance(this_villager, Clubman) and self.map.collision_matrix[grid_pos[1]][grid_pos[0]] and \
@@ -430,7 +430,7 @@ class Game:
                                     if MULTIPLAYER_MODE:
                                         index = unit_to_list_index(this_villager)
                                         action = serialize(player_name=this_villager.owner.name, action="move",
-                                                           triggering_unit=index, pos_x=pos_x, pos_y=pos_y)
+                                                           triggering_unit=index, pos_x=grid_pos[0], pos_y=grid_pos[1])
                                         print(action)
 
                                 elif isinstance(this_villager, Dragon) and self.map.collision_matrix[grid_pos[1]][
@@ -440,7 +440,7 @@ class Game:
                                     if MULTIPLAYER_MODE:
                                         index = unit_to_list_index(this_villager)
                                         action = serialize(player_name=this_villager.owner.name, action="move",
-                                                           triggering_unit=index, pos_x=pos_x, pos_y=pos_y)
+                                                           triggering_unit=index, pos_x=grid_pos[0], pos_y=grid_pos[1])
                                         print(action)
 
                                 # we check if the tile we right click on is a ressource and if its on an adjacent tile of
