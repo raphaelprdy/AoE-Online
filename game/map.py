@@ -3,7 +3,6 @@ import csv
 import random
 import noise
 import pygame.mouse
-from Serialisation import serialize, deserialize
 
 # from .game import show_grid_setting
 from .utils import *
@@ -14,7 +13,7 @@ from units import Villager, Unit, Farm, TownCenter, House, Building, Barracks, C
 
 
 class Map:
-    def __init__(self, hud, entities, grid_length_x, grid_length_y, width, height):
+    def __init__(self, hud, entities, grid_length_x, grid_length_y, width, height, string_map = None):
         self.hud = hud
         # 4 booleans for corners. each corner becomes true when a player occupies at the beginning of the game
         self.occupied_corners = {"TOP_LEFT": False, "TOP_RIGHT": False, "BOTTOM_LEFT": False, "BOTTOM_RIGHT": False}
@@ -38,8 +37,8 @@ class Map:
         # Fog of war
         # self.visible = self.
         # self.fog = False
-
-        self.map = self.create_map()
+        self.map = self.create_map(string_map)
+        self.stra_map = self.convert_map_to_str(self.map)
         self.minimap_panel_width = scale_image(minimap_panel, h= 0.25*self.height).get_width()
 
         self.camera = None
@@ -59,20 +58,27 @@ class Map:
         for p in player_list:
             self.place_starting_units(p)
 
-        #self.place_starting_units()
-        #print("valeur deserialize AI1" + str(deserialize("AI2*spawn*0*0", self)))
-        #print("valeur deserialize AI2 : " + str(deserialize("AI1*spawn*0*1", self)))
         self.anchor_points = self.load_anchor_points("resources/assets/axeman_attack_anchor_90.csv")
         # self.map[10][10] = Dragon((10,20), MAIN_PLAYER, self)
         # to improve animations, not working for now
         # self.anchor_points = self.load_anchor_points("resources/assets/axeman_attack_anchor_90.csv")
 
-    def create_map(self):
+    def create_map(self, str_map = None):
         map = []
+        if str_map:
+            if is_verified(str_map):
+                pass
+
         for grid_x in range(self.grid_length_x):
             map.append([])
             for grid_y in range(self.grid_length_y):
                 map_tile = self.grid_to_map(grid_x, grid_y)
+
+                if str_map:
+                    resource = char_to_resource(str_map[grid_x][grid_y+len(str(grid_x))+1])
+                    map_tile["tile"] = resource["tile"]
+                    map_tile["variation"] = resource["variation"]
+
                 # if tile is resource, we add it to resources_list, is used for display
                 if map_tile["tile"] != "" and map_tile["tile"] != "building" and map_tile["tile"] != "unit":
                     self.resources_list.append(map_tile)
@@ -90,7 +96,42 @@ class Map:
                 scroll = pygame.Vector2(0, 0)
                 scroll.x = 0
                 scroll.y = 0
+
         return map
+
+    def convert_map_to_str(self, map):
+        str_map=[]
+        mapsize = len(map)
+        for line in range(mapsize):
+            str_line = str(line) + "/" #the line that we will send : as UDP does not take the order
+                                 #of packages into consideration, we put the number of the line at the beginning to know which line it is
+            line_checksum = 0 #a key to verify the integrity of the line
+            for tile in map[line]:
+                #we get the character
+                char = get_char(tile)
+                #we add the character at the end of the string
+                str_line = str_line + char
+                #we add the ascii value of the character to the checksum
+                line_checksum += ord(char)
+            #adding the checksum at the end of the line
+            str_line = str_line + '/' + str(line_checksum)
+            str_map.append(str_line)
+
+        #calculation of the column_checksum
+        for column in range(mapsize): 
+            #for each column, it is equal to 0 at the beginning
+            column_checksum = 0 
+            #we check each value in the column
+            for line in range(mapsize): 
+                #we add that value to the column checksum
+                offset = 1 if line < 10 else 2
+                column_checksum = column_checksum + ord(str_map[line][column+offset+1])
+            #adding the column checksum at the end of the line that has the same number
+            str_map[column] = str_map[column] + '/' + str(column_checksum)
+        
+        print_str_map(str_map)
+
+        return str_map
 
     def update(self, camera, screen):
         self.timer = pygame.time.get_ticks()
@@ -315,7 +356,7 @@ class Map:
         return images
 
     # this function returns the isometric picture coordinates corresponding to a grid_tile
-    def grid_to_map(self, grid_x, grid_y):
+    def grid_to_map(self, grid_x, grid_y, str_map = None):
         rect = [
             (grid_x * TILE_SIZE, grid_y * TILE_SIZE),
             (grid_x * TILE_SIZE + TILE_SIZE, grid_y * TILE_SIZE),
@@ -475,12 +516,12 @@ class Map:
         return collision_matrix
 
     # here is the fonction that randomly places the player's starting units 4 tiles from a random map corner
-    def place_starting_units(self, the_player=MAIN_PLAYER, corner: (int, int) = None):
+    def place_starting_units(self, the_player=MAIN_PLAYER):
         """
 
         Args:
             the_player: ... for which player are we placing the town center; Makes sense right
-            corner: the starting corner; if not specified, we will randomly choose one
+
         Returns: nothing
 
         """
@@ -493,13 +534,13 @@ class Map:
 
         # TEST MODE should be disabled if we play a real game
         if TEST_MODE:
-            #   Player 1 (red) is always TOP_LEFT
+            #   Player 2 (blue, us) is always TOP_LEFT
             if the_player == playerTwo:
                 place_x = 0
                 place_y = 0
                 self.occupied_corners["TOP_LEFT"] = True
 
-            #   Player 2 (blue, us) is always TOP_RIGHT
+            #   Player 1 (red) is always TOP_RIGHT
             elif the_player == playerOne:
                 place_x = 1
                 place_y = 0
@@ -513,11 +554,6 @@ class Map:
 
             #to skip the random determination
             townhall_pos_determined = True
-
-        if corner:
-            townhall_pos_determined = True
-            place_x = corner[0]
-            place_y = corner[1]
 
         # for real games (will be skipped if TEST_MODE is enabled):
         while not townhall_pos_determined:
@@ -554,8 +590,10 @@ class Map:
                     self.clear_tile(x, y)
             # we place towncenter
             new_building = TownCenter((4, 5), self, the_player)
+            # starting unit
+            start_unit = Villager(self.map[4][6]["grid"], the_player, self)
             # starting unit. For debug reasons, we need a tuple and not a list (pathfinding)
-            Villager(tuple(self.map[4][6]["grid"]), the_player, self)
+            vill_pos = tuple(self.map[4][6]["grid"])
             the_player.side = "top"
 
         # top_right
@@ -566,8 +604,10 @@ class Map:
                     self.clear_tile(x, y)
             # we place towncenter
             new_building = TownCenter((self.grid_length_x - 6, 5), self, the_player)
+            # starting unit
+            start_unit = Villager(self.map[self.grid_length_x - 6][6]["grid"], the_player, self)
             # starting unit. For debug reasons, we need a tuple and not a list (pathfinding)
-            Villager(tuple(self.map[self.grid_length_x - 6][6]["grid"]), the_player, self)
+            vill_pos = tuple(self.map[self.grid_length_x - 6][6]["grid"])
             the_player.side = "right"
 
         # bot_left
@@ -578,8 +618,10 @@ class Map:
                     self.clear_tile(x, y)
             # we place towncenter
             new_building = TownCenter((4, self.grid_length_y - 5), self, the_player)
+            # starting unit
+            start_unit = Villager(self.map[4][self.grid_length_y - 4]["grid"], the_player, self)
             # starting unit. For debug reasons, we need a tuple and not a list (pathfinding)
-            Villager(tuple(self.map[4][self.grid_length_y - 4]["grid"]), the_player, self)
+            vill_pos = tuple(self.map[4][self.grid_length_y - 4]["grid"])
             the_player.side = "left"
 
         # bot_right
@@ -590,9 +632,11 @@ class Map:
                     self.clear_tile(x, y)
             # we place towncenter
             new_building = TownCenter((self.grid_length_x - 6, self.grid_length_y - 5), self, the_player)
-            # starting unit. For debug reasons, we need a tuple and not a list (pathfinding)
-            Villager(tuple(self.map[self.grid_length_x - 6][self.grid_length_y - 4]["grid"]), the_player,
+            # starting unit
+            start_unit = Villager(self.map[self.grid_length_x - 6][self.grid_length_y - 4]["grid"], the_player,
                                   self)
+            # starting unit. For debug reasons, we need a tuple and not a list (pathfinding)
+            vill_pos = tuple(self.map[self.grid_length_x - 6][self.grid_length_y - 4]["grid"])
             the_player.side = "bot"
 
         # similar actions wherever the starting units were placed
@@ -605,9 +649,6 @@ class Map:
 
         # for starting villager : we increase food pop (only) for the player owning him
         the_player.pay_entity_cost_bis(Villager)
-
-        #serialize
-        print("test" + serialize(player_name=the_player.name, action="spawn", pos_x=place_x, pos_y=place_y))
 
     def remove_entity(self, entity, scroll):
         """
