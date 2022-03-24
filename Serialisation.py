@@ -19,10 +19,10 @@ def serialize(player_name: str, action: str, entity=None, triggering_unit=None, 
               pos_y: int = None) -> str:
     """
         Args:
-            player_name: le joueur à l origine de l action à sérialiser / propriétaire de l entité
+            player_name: (string) le nom du joueur à l origine de l action à sérialiser / propriétaire de l entité
             action: (string) un mot clé décrivant l’action à sérialiser
             entity: argument polyvalent dont le type dépend de l’action... unité type, bâtiment à construire, etc...
-            triggering_unit: l unité qui déclenche l action à sérialiser
+            triggering_unit: l unité qui déclenche l action à sérialiser ou sa position dans la liste d'unité du joueur
             pos_x: (int) la position en x de l unité ou la tile
             pos_y: (int) la position en y de l unité ou la tile
 
@@ -113,12 +113,16 @@ def deserialize(action: str, world=None) -> int:
                 return -1
 
         elif words[1] == "attack":
-            pass
-            # TODO
+            if words[2] and words[3] and words[4]:
+                triggering_unit = number_to_unit(int(words[2]), player)
+                target_pos = (int(words[3]), int(words[4]))
+                triggering_unit.go_to_attack(target_pos)
+
 
         #move fait en sorte qu'un villageois bouge vers la tile dont on a passé les coordonnés en paramètre
         elif words[1] == "move":
             if words[2] and words[3] and words[4]:
+                print(words[2], words[3], words[4])
                 unit = number_to_unit(int(words[2]), player)
                 pos = (int(words[3]), int(words[4]))
                 unit.move_to(world.map[pos[0]][pos[1]])

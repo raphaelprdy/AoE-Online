@@ -271,8 +271,43 @@ class Game:
                                 else:
                                     print("Code deserialize :" + "ECHEC deserialisation: action corrompue\n")
 
+                    elif event.key == pygame.K_LCTRL:
+                        #target position
+                        pos_x = MAIN_PLAYER.towncenter_pos[0] + 1
+                        pos_y = MAIN_PLAYER.towncenter_pos[1] + 2
+                        Villager((pos_x, pos_y), playerTwo, self.map)
+                        playerTwo.pay_entity_cost_bis(Villager)
+
+                        #self.map.map[pos_x][pos_y]["tile"] = "tree"
+                        #self.map.map[pos_x][pos_y]["collision"] = True
+                        #self.map.map[pos_x][pos_y]["max_health"] = 10
+                        #self.map.map[pos_x][pos_y]["health"] = 10
+                        #self.map.map[pos_x][pos_y]["variation"] = 0
+
+                        #self.map.resources_list.append(self.map.map[pos_x][pos_y])
+
+
+                        # FORM ACTION a changé de nom : deserialize
+                        #action = serialize(player_name=MAIN_PLAYER.name, action="move", triggering_unit=0, pos_x=pos_x, pos_y=pos_y)
+                        #action = serialize(player_name=MAIN_PLAYER.name, action="build", entity="Tower", triggering_unit=0, pos_x=pos_x, pos_y=pos_y)
+                        #action = serialize(player_name=MAIN_PLAYER.name, action="research", entity="Advance to Feudal Age")
+                        #action = serialize(player_name=MAIN_PLAYER.name, action="gather", triggering_unit=0, pos_x=pos_x, pos_y=pos_y)
+                        action = serialize(player_name=MAIN_PLAYER.name, action="attack", triggering_unit=0, pos_x=pos_x, pos_y=pos_y)
+
+                        print(action)
+                        deserialize(action, self.map)
+
+                    elif event.key == pygame.K_LALT:
+                        for x in range (0,50):
+                            for y in range (0,50):
+                                pseudo_serialize = ("Lucien*clear*"+str(x)+"*"+str(y))
+                                if not deserialize(pseudo_serialize, world=self.map):
+                                    print("Deserialization clear succès")
+                                else:
+                                    print("Code deserialize :" + "ECHEC deserialisation: action corrompue\n")
+
                     # Enable - Disable health bars
-                    elif event.key == pygame.K_LALT or event.key == pygame.K_RALT:
+                    elif event.key == pygame.K_RALT:
                         global ENABLE_HEALTH_BARS
                         ENABLE_HEALTH_BARS = not ENABLE_HEALTH_BARS
 
