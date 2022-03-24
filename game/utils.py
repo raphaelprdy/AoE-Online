@@ -1,6 +1,7 @@
 import pygame
 from settings import MAP_SIZE_X, MAP_SIZE_Y
 
+EQ_TABLE = {"tree" : ord('0'), "rock" : ord('A'), "gold" : ord('H'), "berrybush" : ord('O')}
 RESSOURCE_LIST = ["wood", "food", "gold", "stone"]
 
 GENERAL_UNIT_LIST = []
@@ -317,3 +318,94 @@ def get_angle_between(origin_tile_pos: [int, int], end_tile_pos: [int, int]):
 
     return angle
 
+def get_char(t):
+    #we must verify that the tile exists. If not, we're in big trouble
+    assert t
+    #if there's nothing on the tile, it's only grass. Grass = 0, variation will be generated later.
+    if not t["tile"] :
+        return "_"
+    #if there's something on the tile we'll find out what it is and get it's variation
+    else :
+        return chr(EQ_TABLE[t["tile"]] + t["variation"])
+
+def char_to_resource(char) :
+    res = {"tile" : "", "variation" : 0}
+    if '0' <= char <= '9' :
+        res["tile"] = "tree"
+        res["variation"] = ord(char) - ord('0')
+    elif 'A' <= char <= 'G' :
+        res["tile"] = "rock"
+        res["variation"] = ord(char) - ord('A')
+    elif 'H' <= char <= 'N' :
+        res["tile"] = "gold"
+        res["variation"] = ord(char) - ord('H')
+    elif 'O' <= char <= 'Q' :
+        res["tile"] = "berrybush"
+        res["variation"] = ord(char) - ord('O')
+
+    return res
+
+def print_str_map(map, raw=True) :
+    #use this function ONLY IF you're using a map that has been converted to str.
+    assert isinstance(map, list)
+    #if we want to see the str map as it is (= without any interpretation), we leave raw to "True"
+    if raw :
+        #we print each line after each other
+        for line in range(len(map)):
+            print(map[line])
+    
+    #else we want to know what each char stands for
+    else :
+        interpreted_map=[]
+        for line in range(len(map)) :
+            #we first have to find at which character the line start : we know that it's after the first /, so we have to find / in the line
+            cmpt = 0
+            i = map[line][cmpt]
+            #quite a simple way to find /
+            while i != '/' :
+                cmpt += 1
+                i = map[line][cmpt]
+            print(i)
+            print(map[line][cmpt]," ",map[line][cmpt+1])
+            #we start looking at what's inside the line AFTER /, so at character cmpt+1
+            for column in range(cmpt + 1,len(map)) :
+                interpreted_map.append("")
+                #we convert each char to a ressource with a variation
+                ressource = char_to_resource(map[line][column])
+                #based on the ressource, we print different letters
+                if ressource["tile"] == "tree" :
+                    interpreted_map[line] += 'T'
+                elif ressource["tile"] == "rock" :
+                    interpreted_map[line] += 'r'
+                elif ressource["tile"] == "berrybush" :
+                    interpreted_map[line] += 'b'
+                elif ressource["tile"] == "gold" :
+                    interpreted_map[line] += 'g'
+                else :
+                    interpreted_map[line] += '_'
+
+        #we only print what the map contains, not the checksums, because they are useless if we don't see the variation at the same time
+        for line in range(len(map)):
+            divided_line = interpreted_map[line].split('/')
+            print(divided_line[0])
+        #prompt which explains to the person reading the map what each letter on the map stands for
+        print("Légende : _ = grass (not g to ease the reading), T = tree, g = gold, b = berrybush, r = rock")
+
+def is_verified(str_map):
+    #use this funtion ONLY with a str_map
+    assert isinstance(str_map, list)
+    #we split each line of the str_map : first element is the number of the line, second is the resources of the line, third is the checksum of the line and last is the checksum of the column
+    for line in range(len(str_map)):
+        #initialize the checksums to 0
+        line_checksum = 0
+        column_checksum = 0
+        #we get the current line and divide it to get all of its caracteristics
+        curr_line = str_map[line].split('/')
+        #we check every character in the current line
+        for char in range(len(str_map)):
+            #we add the ascii value of the character to the first checksum
+            line_checksum += ord(curr_line[1][char])
+            offset = 1 if char < 10 else 2
+            column_checksum += ord(str_map[char][line + offset + 1])
+        if str(line_checksum) != curr_line[2] or str(column_checksum) != curr_line[3]:
+            print("WRONG CHECKSUM")

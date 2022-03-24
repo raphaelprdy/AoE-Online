@@ -849,6 +849,8 @@ class Villager(Unit):
             self.map.collision_matrix[self.building_to_create["pos"][1] - 1][self.building_to_create["pos"][0] + 1] = 0
             self.map.collision_matrix[self.building_to_create["pos"][1] - 1][self.building_to_create["pos"][0]] = 0
 
+            self.owner.barrack_list.append(new_building)
+
         elif self.building_to_create["name"] == "Market":
             new_building = Market((self.building_to_create["pos"][0], self.building_to_create["pos"][1]), self.map, self.owner)
 

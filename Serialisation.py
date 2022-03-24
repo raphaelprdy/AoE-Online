@@ -69,10 +69,16 @@ def deserialize(action: str, world=None) -> int:
 
     if player in player_list:
 
+        #gather permet de faire en sorte qu'un villageois passé en paramètre aille récolter une ressource dont la
+        #position est passée en paramètre
         if words[1] == "gather":
-            if words[2] and words[4]:
-                pass
-                # words[4].gather(...)
+            if words[2] and words[3] and words[4]:
+                villager = number_to_unit(int(words[2]), player)
+                pos = (int(words[3]), int(words[4]))
+                villager.go_to_ressource((pos[0], pos[1]))
+                return 0
+            else:
+                return -1
 
         # playerOne*spawn*pos_x*pox_y
         # utilisé pour communiquer l emplacement de départ d un joueur
@@ -86,34 +92,54 @@ def deserialize(action: str, world=None) -> int:
             else:
                 return -1
 
+        # build fait en sorte qu'un villageois passé en paramètre aille construire un batiment passé en paramètre sur
+        # une tile passée en paramètre
         elif words[1] == "build":
             if words[2] and words[3] and words[4] and words[5]:
-                # working_villager.go_to_build(grid_pos, self.hud.selected_tile["name"])
+
                 villager = number_to_unit(int(words[3]), player)
                 pos = (int(words[4]), int(words[5]))
                 villager.go_to_build(pos, words[2])
+                return 0
+            else:
+                return -1
 
+        # research permet de rechercher une technologie passée en paramètre, ou de passer d'âge
         elif words[1] == "research":
             if words[2]:
                 player.towncenter.research_tech(words[2])
+                return 0
+            else:
+                return -1
 
         elif words[1] == "attack":
             pass
             # TODO
 
+        #move fait en sorte qu'un villageois bouge vers la tile dont on a passé les coordonnés en paramètre
         elif words[1] == "move":
             if words[2] and words[3] and words[4]:
-                print(words[2], words[3], words[4])
                 unit = number_to_unit(int(words[2]), player)
                 pos = (int(words[3]), int(words[4]))
-                unit.move_to(pos)
-                # TODO (not finished)
+                unit.move_to(world.map[pos[0]][pos[1]])
+                return 0
+            else:
+                return -1
 
+        #train permet d'entrainer une unité du type qu'on passe en paramètre
         elif words[1] == "train":
             if words[2]:
-                pass
-                # TODO
-                # player.towncenter.train()
+                if words[2] == "Villager":
+                    unit_to_train = str_to_type(words[2])
+                    player.towncenter.train(unit_to_train)
+                    return 0
+                else:
+                    if player.barrack_list:
+                        unit_to_train = str_to_type(words[2])
+                        player.barrack_list[0].train(unit_to_train)
+                        return 0
+                    else:
+                        return -1
 
         #clear enlève les ressources ; pas les unités ni les bâtiments; Fonction testée avec alt_gauche en jeu
         elif words[1] == "clear":
@@ -143,3 +169,9 @@ def name_to_player(player_name):
 # returns the unit from her number in the unit list of the player
 def number_to_unit(number, player):
     return player.unit_list[number]
+
+def str_to_type(string):
+    if string == "Villager":
+        return Villager
+    elif string == "Clubman":
+        return Clubman
