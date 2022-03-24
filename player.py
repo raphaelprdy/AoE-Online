@@ -24,6 +24,8 @@ class Player:
 
         self.building_list = []
 
+        self.barrack_list = []
+
         #towncenter
         # formated as (x,y)
         self.towncenter_pos = None
