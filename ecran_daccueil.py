@@ -1,4 +1,5 @@
 
+from turtle import color
 import pygame 
 from tkinter import *
 from tkinter import ttk
@@ -161,6 +162,27 @@ def Nouvelpartie(fen,w,h):
     fen2.mainloop()
 
 def Multiplayer(fen,w,h):
+
+    def rejoindre_cmd():
+        graphe3.delete("w")
+        graphe3.delete("u")
+        text=entry1.get()
+        if(text != ""):
+            graphe3.create_text(w*.335, h*.53,text="Paramètre Serveur",font=('Arial',"20"),anchor="n",fill="red",tag="v")
+            graphe3.create_text(w*.5, h*.6,text="Adresse IP de l'hote :"+text,font=('Arial',"13"),anchor="n",fill="white",tags="w")
+            graphe3.create_text(w*.5, h*.62,text="Joueurs de la partie :",font=('Arial',"13"),anchor="n",fill="white",tags="u")
+        
+        entry1.delete(0,END)
+    
+    def lancement():
+        pass
+    
+    def deconnexion():
+        graphe3.delete("w")
+        graphe3.delete("u")
+        graphe3.delete("v")
+
+
     fen.destroy()
     fen3=Tk()
     fen3.title("Setting")
@@ -176,8 +198,20 @@ def Multiplayer(fen,w,h):
     graphe3.create_image(w*0.5,h*.47, image=img3)
 
     graphe3.pack()
-    game=Button(fen3,text='Rejoindre', bg="burlywood4", width=44, height=1, font='arial',)
+
+    graphe3.create_text(w*.5, h*.43,text="Adresse IP de l'hôte",font=('Arial',"15"),anchor="n")
+    entry1 = Entry(fen3,width=45,background="burlywood1")
+    entry1.place(x=w*.425, y=h*.45)
+
+    game=Button(fen3,text='Rejoindre', bg="burlywood4", width=44, height=1, font='arial',command=lambda:rejoindre_cmd())
     game.place(x=w*.39, y=h*.47)
+    deco=Button(fen3,text='Deconnexion', bg="burlywood4", width=44, height=1, font='arial',command=lambda:deconnexion())
+    deco.place(x=w*.39, y=h*.76)
+    partie=Button(fen3,text='Lancer la Partie', bg="burlywood4", width=44, height=1, font='arial',command=lambda:lancement())
+    partie.place(x=w*.39, y=h*.8)
+
+    exit=Button(fen3,text='retour', bg="brown3", width=14, height=1, font='arial',command=lambda:fonction_retour(fen3))
+    exit.place(x=w*.90, y=h*.90)
 
     fen3.mainloop()
 
