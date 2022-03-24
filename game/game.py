@@ -1,6 +1,6 @@
 from .camera import Camera
 from .map import *
-from .utils import draw_text, find_owner, IA_MODE
+from .utils import draw_text, find_owner, IA_MODE, MULTIPLAYER_MODE
 from .hud import Hud
 from .animation import *
 #from .AI import AI

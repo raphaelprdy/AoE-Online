@@ -16,6 +16,7 @@ BUILDING_TYPES = []
 TEST_MODE = True
 IA_MODE = False
 SPEED_OF_GAME = 1
+MULTIPLAYER_MODE = True
 
 
 def draw_text(screen, text: str, size: int, color: (int, int, int), pos: (int, int)):

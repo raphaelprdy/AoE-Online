@@ -1,17 +1,5 @@
 from player import *
 
-"""
-player action(ressource / unit / building)(with+unit) (to+tile):
-- playerOne gather  resource unit
-- playerOne build building unit1 pos_x pos_y  *
-- playerOne research tech1                    *
-- playerOne attack enemy_unit unit
-- playerOne move unit pos_x pos_y             *
-- playerOne train unit
-- playerOne spawn pos_x pos_y
-- playerOne clear pos_x pos_y
-"""
-
 
 # transforms an in-game action (actions available are listed above) into an str. Will be used to easily send data for
 # multiplayer games
