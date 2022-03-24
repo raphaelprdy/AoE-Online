@@ -70,9 +70,13 @@ def deserialize(action: str, world=None) -> int:
     if player in player_list:
 
         if words[1] == "gather":
-            if words[2] and words[4]:
-                pass
-                # words[4].gather(...)
+            if words[2] and words[3] and words[4]:
+                villager = number_to_unit(int(words[2]), player)
+                pos = (int(words[3]), int(words[4]))
+                villager.go_to_ressource((pos[0], pos[1]))
+                return 0
+            else:
+                return -1
 
         # playerOne*spawn*pos_x*pox_y
         # utilisé pour communiquer l emplacement de départ d un joueur

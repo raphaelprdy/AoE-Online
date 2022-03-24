@@ -142,10 +142,19 @@ class Game:
                     elif event.key == pygame.K_LCTRL:
                         pos_x = MAIN_PLAYER.towncenter_pos[0] + 1
                         pos_y = MAIN_PLAYER.towncenter_pos[1] + 2
+                        self.map.map[pos_x][pos_y]["tile"] = "tree"
+                        self.map.map[pos_x][pos_y]["collision"] = True
+                        self.map.map[pos_x][pos_y]["max_health"] = 10
+                        self.map.map[pos_x][pos_y]["health"] = 10
+                        self.map.map[pos_x][pos_y]["variation"] = 0
+
+                        self.map.resources_list.append(self.map.map[pos_x][pos_y])
+
                         # FORM ACTION a changé de nom : deserialize
-                        #action = serialize(player_name=MAIN_PLAYER.name, action="move", triggering_unit=0, pos_x=pos_x, pos_y=pos_y) #move doesnt work currently
-                        action = serialize(player_name=MAIN_PLAYER.name, action="build", entity="Tower", triggering_unit=0, pos_x=pos_x, pos_y=pos_y)
+                        #action = serialize(player_name=MAIN_PLAYER.name, action="move", triggering_unit=0, pos_x=pos_x, pos_y=pos_y)
+                        #action = serialize(player_name=MAIN_PLAYER.name, action="build", entity="Tower", triggering_unit=0, pos_x=pos_x, pos_y=pos_y)
                         #action = serialize(player_name=MAIN_PLAYER.name, action="research", entity="Advance to Feudal Age")
+                        action = serialize(player_name=MAIN_PLAYER.name, action="gather", triggering_unit=0, pos_x=pos_x, pos_y=pos_y)
                         print(action)
                         deserialize(action, self.map)
 
@@ -248,7 +257,7 @@ class Game:
                             villager_pos = self.map.hud.examined_tile.pos
                             this_villager = self.map.units[villager_pos[0]][villager_pos[1]]
 
-                            print(this_villager.owner, MAIN_PLAYER)
+                            #print(this_villager.owner, MAIN_PLAYER)
                             if this_villager.owner == MAIN_PLAYER or TEST_MODE:
                                 pos_mouse = self.map.mouse_to_grid(mouse_pos[0], mouse_pos[1], self.camera.scroll)
                                 pos_x = pos_mouse[0]
