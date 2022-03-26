@@ -10,6 +10,7 @@ from settings import *
 # from buildings import Farm, TownCenter, House, Building
 from player import playerOne, playerTwo, playerThree, player_list, MAIN_PLAYER
 from units import Villager, Unit, Farm, TownCenter, House, Building, Barracks, Clubman, Dragon, Tower, Wall, Market
+from Serialisation import serialize, deserialize
 
 from Serialisation import *
 
@@ -56,10 +57,13 @@ class Map:
 
         # universal timer
         self.timer = 0
+        if IS_HOST:
+            for p in player_list:
+                self.place_starting_units(p)
 
-        for p in player_list:
-            self.place_starting_units(p)
-
+        #self.place_starting_units()
+        #print("valeur deserialize AI1" + str(deserialize("AI2*spawn*0*0", self)))
+        #print("valeur deserialize AI2 : " + str(deserialize("AI1*spawn*0*1", self)))
         self.anchor_points = self.load_anchor_points("resources/assets/axeman_attack_anchor_90.csv")
         # self.map[10][10] = Dragon((10,20), MAIN_PLAYER, self)
         # to improve animations, not working for now
@@ -120,17 +124,17 @@ class Map:
             str_map.append(str_line)
 
         #calculation of the column_checksum
-        for column in range(mapsize): 
+        for column in range(mapsize):
             #for each column, it is equal to 0 at the beginning
-            column_checksum = 0 
+            column_checksum = 0
             #we check each value in the column
-            for line in range(mapsize): 
+            for line in range(mapsize):
                 #we add that value to the column checksum
                 offset = 1 if line < 10 else 2
                 column_checksum = column_checksum + ord(str_map[line][column+offset+1])
             #adding the column checksum at the end of the line that has the same number
             str_map[column] = str_map[column] + '/' + str(column_checksum)
-        
+
         print_str_map(str_map)
 
         return str_map
@@ -525,12 +529,12 @@ class Map:
         return collision_matrix
 
     # here is the fonction that randomly places the player's starting units 4 tiles from a random map corner
-    def place_starting_units(self, the_player=MAIN_PLAYER):
+    def place_starting_units(self, the_player=MAIN_PLAYER, corner: (int, int) = None):
         """
 
         Args:
             the_player: ... for which player are we placing the town center; Makes sense right
-
+            corner: the starting corner; if not specified, we will randomly choose one
         Returns: nothing
 
         """
@@ -543,13 +547,13 @@ class Map:
 
         # TEST MODE should be disabled if we play a real game
         if TEST_MODE:
-            #   Player 2 (blue, us) is always TOP_LEFT
+            #   Player 1 (red) is always TOP_LEFT
             if the_player == playerTwo:
                 place_x = 0
                 place_y = 0
                 self.occupied_corners["TOP_LEFT"] = True
 
-            #   Player 1 (red) is always TOP_RIGHT
+            #   Player 2 (blue, us) is always TOP_RIGHT
             elif the_player == playerOne:
                 place_x = 1
                 place_y = 0
@@ -563,6 +567,11 @@ class Map:
 
             #to skip the random determination
             townhall_pos_determined = True
+
+        if corner:
+            townhall_pos_determined = True
+            place_x = corner[0]
+            place_y = corner[1]
 
         # for real games (will be skipped if TEST_MODE is enabled):
         while not townhall_pos_determined:
@@ -599,10 +608,8 @@ class Map:
                     self.clear_tile(x, y)
             # we place towncenter
             new_building = TownCenter((4, 5), self, the_player)
-            # starting unit
-            start_unit = Villager(self.map[4][6]["grid"], the_player, self)
             # starting unit. For debug reasons, we need a tuple and not a list (pathfinding)
-            vill_pos = tuple(self.map[4][6]["grid"])
+            Villager(tuple(self.map[4][6]["grid"]), the_player, self)
             the_player.side = "top"
 
         # top_right
@@ -613,10 +620,8 @@ class Map:
                     self.clear_tile(x, y)
             # we place towncenter
             new_building = TownCenter((self.grid_length_x - 6, 5), self, the_player)
-            # starting unit
-            start_unit = Villager(self.map[self.grid_length_x - 6][6]["grid"], the_player, self)
             # starting unit. For debug reasons, we need a tuple and not a list (pathfinding)
-            vill_pos = tuple(self.map[self.grid_length_x - 6][6]["grid"])
+            Villager(tuple(self.map[self.grid_length_x - 6][6]["grid"]), the_player, self)
             the_player.side = "right"
 
         # bot_left
@@ -627,10 +632,8 @@ class Map:
                     self.clear_tile(x, y)
             # we place towncenter
             new_building = TownCenter((4, self.grid_length_y - 5), self, the_player)
-            # starting unit
-            start_unit = Villager(self.map[4][self.grid_length_y - 4]["grid"], the_player, self)
             # starting unit. For debug reasons, we need a tuple and not a list (pathfinding)
-            vill_pos = tuple(self.map[4][self.grid_length_y - 4]["grid"])
+            Villager(tuple(self.map[4][self.grid_length_y - 4]["grid"]), the_player, self)
             the_player.side = "left"
 
         # bot_right
@@ -641,11 +644,9 @@ class Map:
                     self.clear_tile(x, y)
             # we place towncenter
             new_building = TownCenter((self.grid_length_x - 6, self.grid_length_y - 5), self, the_player)
-            # starting unit
-            start_unit = Villager(self.map[self.grid_length_x - 6][self.grid_length_y - 4]["grid"], the_player,
-                                  self)
             # starting unit. For debug reasons, we need a tuple and not a list (pathfinding)
-            vill_pos = tuple(self.map[self.grid_length_x - 6][self.grid_length_y - 4]["grid"])
+            Villager(tuple(self.map[self.grid_length_x - 6][self.grid_length_y - 4]["grid"]), the_player,
+                                  self)
             the_player.side = "bot"
 
         # similar actions wherever the starting units were placed
@@ -658,6 +659,9 @@ class Map:
 
         # for starting villager : we increase food pop (only) for the player owning him
         the_player.pay_entity_cost_bis(Villager)
+
+        #serialize
+        #print("test" + serialize(player_name=the_player.name, action="spawn", pos_x=place_x, pos_y=place_y))
 
     def remove_entity(self, entity, scroll):
         """
@@ -749,6 +753,8 @@ class Map:
         self.map[grid_x][grid_y]["variation"] = 0
         self.collision_matrix[grid_y][grid_x] = 1
         self.map[grid_x][grid_y]["collision"] = False
+
+        #serialize(MAIN_PLAYER, action="clear", pos_x=grid_x,pos_y=grid_y)
 
     # returns true if there is collision, else False
     def is_there_collision(self, grid_pos: [int, int]):

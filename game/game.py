@@ -125,7 +125,8 @@ class Game:
                         "48/_________052875583_____H1____35794564712586363987_/3469/3842",
                         "49/________8105668179_0_________2362303735484233134__/3457/3933"]
         # map
-        self.map = Map(self.hud, self.entities, 50, 50, self.width, self.height)
+        self.map = Map(self.hud, self.entities, 50, 50, self.width, self.height, self.str_map)
+
 
         # camera
         self.camera = Camera(self.width, self.height, self.map)

@@ -12,7 +12,7 @@ BUILDING_TYPES = []
 
 
 #Global parameters of the game
-
+IS_HOST = True
 TEST_MODE = True
 IA_MODE = False
 SPEED_OF_GAME = 1
