@@ -19,7 +19,7 @@ SPEED_OF_GAME = 1
 MULTIPLAYER_MODE = True
 
 
-def draw_text(screen, text: str, size: int, color: (int, int, int), pos: (int, int)):
+def draw_text(screen, text: str, size: int, color, pos):
     # create a Font object from the system fonts
     # SysFont(name, size, bold=False, italic=False)
 
@@ -270,7 +270,7 @@ def find_owner(pos):
 
 
 # returns the angle between the origin tile and the destination tile. Angle goes from 0 to 360, 0 top, 90 right, etc...
-def get_angle_between(origin_tile_pos: [int, int], end_tile_pos: [int, int]):
+def get_angle_between(origin_tile_pos, end_tile_pos):
     # first we calculate angle between grid, then we will apply some maths to get the "real" isometric angle
     # if origin == destination, no calcul
     angle = 0
