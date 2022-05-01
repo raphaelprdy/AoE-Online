@@ -12,6 +12,28 @@ from game.animation import BuildingDeathAnimation, VillagerAttackAnimation, Vill
     IdleDragonAnimation, DeathDragonAnimation
 
 
+#met implémente la collision dans map.map et map.collision_matrix. Par défaut, le bâtiment 1x1 est traité, sinon il faut
+#spécifier la taille
+def set_collision_building(building_pos: (int, int), map, building_size: int = 1):
+
+
+    map.map[building_pos[0]][building_pos[1]]["tile"] = "building"
+    # 0 means collision = True
+    map.collision_matrix[building_pos[1]][building_pos[0]] = 0
+
+    if building_size == 2:
+
+        #the 3 other tiles
+        map.map[building_pos[0] + 1][building_pos[1]]["tile"] = "building"
+        map.collision_matrix[building_pos[1]][building_pos[0] + 1] = 0
+
+        map.map[building_pos[0]][building_pos[1] - 1]["tile"] = "building"
+        map.collision_matrix[building_pos[1] - 1][building_pos[0]] = 0
+
+        map.map[building_pos[0] + 1][building_pos[1] - 1]["tile"] = "building"
+        map.collision_matrix[building_pos[1] - 1][building_pos[0] + 1] = 0
+
+
 class Building:
     population_produced = 0
     is_being_built = True
@@ -28,13 +50,20 @@ class Building:
 
         # pos is the tile position, for ex : (4,4)
         self.pos = pos
+        if type(self) == Barracks:
+            self.owner.barrack_pos = self.pos
         self.map = map
         # updating map with the new unit, collision, etc...
         self.map.buildings[self.pos[0]][self.pos[1]] = self
         self.map.entities.append(self)
-        self.map.map[self.pos[0]][self.pos[1]]["tile"] = "building"
-        # 0 means collision = True
-        self.map.collision_matrix[self.pos[1]][self.pos[0]] = 0
+
+        if type(self) in (Barracks,  TownCenter, Market):
+            self.size = 2
+        else:
+            self.size = 1
+
+        #collision
+        set_collision_building(building_pos=self.pos, map=self.map, building_size=self.size)
 
         # will be used in the timer to increase resources of the player
         self.resource_manager_cooldown = pygame.time.get_ticks()
@@ -112,16 +141,6 @@ class TownCenter(Building):
     def __init__(self, pos, map, player_owner_of_unit):
 
         self.name = "Town center"
-        # additional collision bc 2x1 building
-
-        map.map[pos[0] + 1][pos[1]]["tile"] = "building"
-        map.collision_matrix[pos[1]][pos[0] + 1] = 0
-
-        map.map[pos[0]][pos[1] - 1]["tile"] = "building"
-        map.collision_matrix[pos[1] - 1][pos[0]] = 0
-
-        map.map[pos[0] + 1][pos[1] - 1]["tile"] = "building"
-        map.collision_matrix[pos[1] - 1][pos[0] + 1] = 0
 
         self.construction_cost = [0, 0, 0, 0]
 
@@ -375,16 +394,7 @@ class Barracks(Building):
     def __init__(self, pos, map, player_owner_of_unit):
 
         self.name = "Barracks"
-        # additional collision bc 2x1 building
         self.armor = 2
-        map.map[pos[0] + 1][pos[1]]["tile"] = "building"
-        map.collision_matrix[pos[1]][pos[0] + 1] = 0
-
-        map.map[pos[0]][pos[1] - 1]["tile"] = "building"
-        map.collision_matrix[pos[1] - 1][pos[0]] = 0
-
-        map.map[pos[0] + 1][pos[1] - 1]["tile"] = "building"
-        map.collision_matrix[pos[1] - 1][pos[0] + 1] = 0
 
         self.construction_cost = [500, 0, 0, 200]
 
@@ -449,7 +459,7 @@ class Barracks(Building):
         self.owner.pay_entity_cost_bis(unit_type_trained)
 
     def spawn_clubman(self):
-        available_tile_for_spawn = tile_founding(1, 1, 2, self.map.map, self.owner, "")
+        available_tile_for_spawn = tile_founding(x=1, first_layer=1, layer_max=2, map=self.map.map, player=self.owner, tile_type="", origin_pos=self.owner.barrack_pos)
         # print(available_tile_for_spawn[0][0])
         self.map.units[available_tile_for_spawn[0][0]][available_tile_for_spawn[0][1]] = Clubman(
             (available_tile_for_spawn[0][0], available_tile_for_spawn[0][1]), self.owner,

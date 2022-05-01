@@ -25,6 +25,8 @@ class Player:
         self.building_list = []
 
         self.barrack_list = []
+        #temp pour fix le bug du spawn clubman ; ne resout le prb qu'avec une seule barrack
+        self.barrack_pos = None
 
         #towncenter
         # formated as (x,y)

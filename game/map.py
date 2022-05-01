@@ -42,6 +42,7 @@ class Map:
         # self.fog = False
         self.map = self.create_map(string_map)
         self.stra_map = self.convert_map_to_str(self.map)
+        #self.map = self.create_map()
         self.minimap_panel_width = scale_image(minimap_panel, h= 0.25*self.height).get_width()
 
         self.camera = None
@@ -402,7 +403,7 @@ class Map:
             elif r == 4:
                 tile = "berrybush"
                 variation = random.randint(0, 2)
-
+            #grass
             else:
                 tile = ""
                 variation = random.randint(1, 11)
@@ -523,6 +524,7 @@ class Map:
         collision_matrix = [[1 for x in range(self.grid_length_x)] for y in range(self.grid_length_y)]
         for x in range(self.grid_length_x):
             for y in range(self.grid_length_y):
+
                 # we iterate through our tiles, if there's something, we put a 0 in our collision matrix
                 if self.map[x][y]["collision"]:
                     collision_matrix[y][x] = 0
@@ -1015,7 +1017,8 @@ class Map:
 
         # for normal buildings (1x1)
         else:
-            if self.temp_tile["collision"]:
+            if self.collision_matrix[grid[1]][grid[0]] == 0:
+
                 self.highlight_tile(grid[0], grid[1], screen, "RED", camera.scroll)
             else:
                 self.highlight_tile(grid[0], grid[1], screen, "GREEN", camera.scroll)
