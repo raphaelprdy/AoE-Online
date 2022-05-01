@@ -529,7 +529,7 @@ class Map:
         return collision_matrix
 
     # here is the fonction that randomly places the player's starting units 4 tiles from a random map corner
-    def place_starting_units(self, the_player=MAIN_PLAYER, corner: (int, int) = None):
+    def place_starting_units(self, the_player=MAIN_PLAYER, corner = None):
         """
 
         Args:
@@ -757,7 +757,7 @@ class Map:
         #serialize(MAIN_PLAYER, action="clear", pos_x=grid_x,pos_y=grid_y)
 
     # returns true if there is collision, else False
-    def is_there_collision(self, grid_pos: [int, int]):
+    def is_there_collision(self, grid_pos):
         if 0 <= grid_pos[0] < self.grid_length_x - 1 and 0 < grid_pos[1] < self.grid_length_y - 1:
             return True if (self.collision_matrix[grid_pos[1]][grid_pos[0]] == 0 or self.map[grid_pos[0]][grid_pos[1]][
                 "collision"]) else False
@@ -765,7 +765,7 @@ class Map:
             return False
 
     # return a list of empty tiles around origin
-    def get_empty_adjacent_tiles(self, origin_pos: [int, int], origin_size=1):
+    def get_empty_adjacent_tiles(self, origin_pos, origin_size=1):
         empty_adj_tiles = []
         checked_tile = ()
         if origin_size == 1:
@@ -1275,7 +1275,7 @@ class Map:
         return anchor_dic
 
     #check nearby tiles of checked_tile to determine if we clicked on the ground or on a 2x2 building
-    def check_selection_2x2_buildings(self, checked_tile: (int, int)):
+    def check_selection_2x2_buildings(self, checked_tile):
         if checked_tile[1] + 1 < self.grid_length_y:
             building = self.buildings[checked_tile[0]][checked_tile[1] + 1]
         if building and type(building) == TownCenter or type(building) == Barracks or type(building) == Market:
@@ -1341,7 +1341,7 @@ class Map:
 
     # use this function to get the (x,y) tuple you need when you when to blit something and you only have its grid position
     # offset is to slightly change the display position, need to find the good offset yourself tho
-    def grid_to_display_pos(self, grid_pos: (int, int), offset=(0, 0)):
+    def grid_to_display_pos(self, grid_pos, offset=(0, 0)):
         render_pos = self.grid_to_renderpos(grid_pos[0], grid_pos[1])
         display_pos = render_pos[0] + self.grass_tiles.get_width() / 2 + self.camera.scroll.x + 10 + offset[
             1], render_pos[1] - 55 + self.camera.scroll.y + offset[1]

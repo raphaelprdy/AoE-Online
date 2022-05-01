@@ -6,7 +6,7 @@ from .animation import *
 #from .AI import AI
 from.new_AI import new_AI
 from time import sleep
-
+import sys
 from Serialisation import *
 
 
@@ -371,7 +371,7 @@ class Game:
                                                 or button["name"] == "Research Iron Horseshoes" \
                                                 or button["name"] == "Research Super Cows":
                                             entity.research_tech(button["name"])
-                                            serialize(PlayerOne, "research", button["name"])
+                                            serialize(playerOne.name, "research", button["name"])
                                         # else it is a building
                                         else:
                                             self.hud.selected_tile = button
