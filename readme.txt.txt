@@ -73,3 +73,5 @@ a retenir : chaque protocole réseau a ses propres problèmes spécifiques
 apprendre à utiliser un truc et le maitriser et tout faire avec
 
 simplicité et paresse sont de grandes vertus
+
+test
