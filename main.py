@@ -6,7 +6,7 @@ from settings import *
 # to force push : git push -f origin branch_name (our branch name is name)
 
 
-def main():
+def main(multi=True, createur=True, ip="192.168.11.128"):
     print("test")
     #intialize pygame
     pygame.init()
@@ -23,7 +23,7 @@ def main():
     pygame.display.set_caption("Age of Empire: Homemade Edition")
     icon = pygame.image.load(os.path.join(common_path,'icon.png'))
     pygame.display.set_icon(icon)
-    game = g(screen, clock)
+    game = g(screen, clock, multi, createur, ip)
 
 #Exit game
     running = True

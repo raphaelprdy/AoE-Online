@@ -8,10 +8,12 @@ from.new_AI import new_AI
 from time import sleep
 import sys
 from Serialisation import *
+from .network import Network
+import signal
 
 
 class Game:
-    def __init__(self, screen, clock):
+    def __init__(self, screen, clock, multi, createur, ip):
         self.screen = screen
         self.clock = clock
         self.width, self.height = self.screen.get_size()
@@ -134,6 +136,11 @@ class Game:
 
         self.timer = self.map.timer
 
+        self.multi = multi
+        self.createur = createur
+        if self.multi:
+            self.network = Network(self.map, createur, ip)
+
 
         # on centre la camera au milieu de la carte
         #th_x = self.map.place_x
@@ -179,6 +186,7 @@ class Game:
         self.playing = True
         while self.playing:
             self.clock.tick(120)
+            
             self.events()
             self.update()
             self.draw()
@@ -239,6 +247,7 @@ class Game:
                 else:
                     if event.key == pygame.K_ESCAPE:
                         # Quit game if chat wasnt activated
+                        self.network.quit_c(signal.SIGINT, 2)
                         pygame.quit()
                         sys.exit()
 
@@ -268,7 +277,8 @@ class Game:
                             for y in range (0,50):
                                 pseudo_serialize = ("Lucien*clear*"+str(x)+"*"+str(y))
                                 if not deserialize(pseudo_serialize, world=self.map):
-                                    print("Deserialization clear succès")
+                                    #print("Deserialization clear succès")
+                                    pass
                                 else:
                                     print("Code deserialize :" + "ECHEC deserialisation: action corrompue\n")
 
@@ -303,7 +313,8 @@ class Game:
                             for y in range (0,50):
                                 pseudo_serialize = ("Lucien*clear*"+str(x)+"*"+str(y))
                                 if not deserialize(pseudo_serialize, world=self.map):
-                                    print("Deserialization clear succès")
+                                    #print("Deserialization clear succès")
+                                    pass
                                 else:
                                     print("Code deserialize :" + "ECHEC deserialisation: action corrompue\n")
 
@@ -413,6 +424,7 @@ class Game:
                                         action = serialize(player_name=this_villager.owner.name, action="attack",
                                                            triggering_unit=index, pos_x=pos_x, pos_y=pos_y)
                                         print(action)
+                                        #self.network.send_action(action)
 
                                 # ONLY MOVEMENT
                                 if isinstance(this_villager, Villager) and self.map.collision_matrix[grid_pos[1]][grid_pos[0]] and \
@@ -424,6 +436,7 @@ class Game:
                                         action = serialize(player_name=this_villager.owner.name, action="move",
                                                            triggering_unit=index, pos_x=grid_pos[0], pos_y=grid_pos[1])
                                         print(action)
+                                        self.network.send_action(action)
 
                                 elif isinstance(this_villager, Clubman) and self.map.collision_matrix[grid_pos[1]][grid_pos[0]] and \
                                         not this_villager.is_attacking:
@@ -433,6 +446,8 @@ class Game:
                                         action = serialize(player_name=this_villager.owner.name, action="move",
                                                            triggering_unit=index, pos_x=grid_pos[0], pos_y=grid_pos[1])
                                         print(action)
+                                        self.network.send_action(action)
+
 
                                 elif isinstance(this_villager, Dragon) and self.map.collision_matrix[grid_pos[1]][
                                     grid_pos[0]] and \
@@ -473,6 +488,8 @@ class Game:
         self.camera.update()
         self.hud.update(self.screen)
         self.map.update(self.camera, self.screen)
+        if self.multi:
+            self.network.listen()
         for an_entity in self.entities:
             an_entity.update()
 
