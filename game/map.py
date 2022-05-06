@@ -40,9 +40,9 @@ class Map:
         # Fog of war
         # self.visible = self.
         # self.fog = False
-        self.map = self.create_map(string_map)
-        self.stra_map = self.convert_map_to_str(self.map)
-        #self.map = self.create_map()
+        #self.map = self.create_map(string_map)
+        #self.stra_map = self.convert_map_to_str(self.map)
+        self.map = self.create_map()
         self.minimap_panel_width = scale_image(minimap_panel, h= 0.25*self.height).get_width()
 
         self.camera = None
