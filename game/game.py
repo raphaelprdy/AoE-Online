@@ -1,6 +1,6 @@
 from .camera import Camera
 from .map import *
-from .utils import draw_text, find_owner, IA_MODE, MULTIPLAYER_MODE, unit_to_list_index
+from .utils import draw_text, find_owner, IA_MODE, unit_to_list_index
 from .hud import Hud
 from .animation import *
 #from .AI import AI
@@ -127,7 +127,7 @@ class Game:
                         "48/_________052875583_____H1____35794564712586363987_/3469/3842",
                         "49/________8105668179_0_________2362303735484233134__/3457/3933"]
         # map
-        self.map = Map(self.hud, self.entities, 50, 50, self.width, self.height, self.str_map)
+        self.map = Map(self.hud, self.entities, grid_length_x=50, grid_length_y=50, width=self.width, height=self.height, string_map=self.str_map, multiplayer_enabled=multi, is_host=createur)
 
 
         # camera
@@ -136,12 +136,17 @@ class Game:
 
         self.timer = self.map.timer
 
+        ################################
+        #          MULTIPLAYER         #
+        ################################
         self.multi = multi
         self.createur = createur
         if self.multi:
             self.network = Network(self.map, createur, ip)
 
-
+        ################################
+        #          CAMERA              #
+        ################################
         # on centre la camera au milieu de la carte
         #th_x = self.map.place_x
         th_x = 25
@@ -151,7 +156,9 @@ class Game:
         cam_y = (iso_to_decarte(th_x*64, th_y*32)[1]) - 1200
         self.camera.scroll = pygame.Vector2(cam_x, cam_y)
 
-        # IA
+        ################################
+        #          IA                  #
+        ################################
         if IA_MODE:
             # we chose a behaviour between all the behaviours we defined
             self.behaviour_possible = ["neutral", "defensive", "aggressive", "pacifist"]
@@ -168,7 +175,9 @@ class Game:
         #defeated player
         self.defeated_player = None
 
-        # chat
+        ################################
+        #          CHAT              #
+        ################################
         self.chat_color = (40, 40, 40, 150)
         self.input_box = pygame.Rect(self.width // 2 - 70, self.height // 2 - 16, 140, 45)
 
@@ -419,7 +428,7 @@ class Game:
                                         and not this_villager.owner == find_owner([pos_x, pos_y]):
                                     # attack !
                                     this_villager.go_to_attack((pos_x, pos_y))
-                                    if MULTIPLAYER_MODE:
+                                    if self.multi:
                                         index = unit_to_list_index(this_villager)
                                         action = serialize(player_name=this_villager.owner.name, action="attack",
                                                            triggering_unit=index, pos_x=pos_x, pos_y=pos_y)
@@ -431,7 +440,7 @@ class Game:
                                         not this_villager.is_gathering and this_villager.targeted_ressource is None and \
                                         not this_villager.is_attacking:
                                     this_villager.move_to(self.map.map[grid_pos[0]][grid_pos[1]])
-                                    if MULTIPLAYER_MODE:
+                                    if self.multi:
                                         index = unit_to_list_index(this_villager)
                                         action = serialize(player_name=this_villager.owner.name, action="move",
                                                            triggering_unit=index, pos_x=grid_pos[0], pos_y=grid_pos[1])
@@ -441,7 +450,7 @@ class Game:
                                 elif isinstance(this_villager, Clubman) and self.map.collision_matrix[grid_pos[1]][grid_pos[0]] and \
                                         not this_villager.is_attacking:
                                     this_villager.move_to(self.map.map[grid_pos[0]][grid_pos[1]])
-                                    if MULTIPLAYER_MODE:
+                                    if self.multi:
                                         index = unit_to_list_index(this_villager)
                                         action = serialize(player_name=this_villager.owner.name, action="move",
                                                            triggering_unit=index, pos_x=grid_pos[0], pos_y=grid_pos[1])
@@ -453,7 +462,7 @@ class Game:
                                     grid_pos[0]] and \
                                      not this_villager.is_attacking:
                                     this_villager.move_to(self.map.map[grid_pos[0]][grid_pos[1]])
-                                    if MULTIPLAYER_MODE:
+                                    if self.multi:
                                         index = unit_to_list_index(this_villager)
                                         action = serialize(player_name=this_villager.owner.name, action="move",
                                                            triggering_unit=index, pos_x=grid_pos[0], pos_y=grid_pos[1])
@@ -469,7 +478,7 @@ class Game:
                                          this_villager.stack_type == self.map.map[pos_x][pos_y]["tile"]):
 
                                     this_villager.go_to_ressource((pos_x, pos_y))
-                                    if MULTIPLAYER_MODE:
+                                    if self.multi:
                                         index = unit_to_list_index(this_villager)
                                         action = serialize(player_name=this_villager.owner.name, action="gather",
                                                            triggering_unit=index, pos_x=pos_x, pos_y=pos_y)

@@ -16,7 +16,7 @@ from Serialisation import *
 
 
 class Map:
-    def __init__(self, hud, entities, grid_length_x, grid_length_y, width, height, string_map = None):
+    def __init__(self, hud, entities, grid_length_x, grid_length_y, width, height, multiplayer_enabled: bool, is_host:bool, string_map = None):
         self.hud = hud
         # 4 booleans for corners. each corner becomes true when a player occupies at the beginning of the game
         self.occupied_corners = {"TOP_LEFT": False, "TOP_RIGHT": False, "BOTTOM_LEFT": False, "BOTTOM_RIGHT": False}
@@ -36,6 +36,13 @@ class Map:
         self.buildings = [[None for x in range(self.grid_length_x)] for y in range(self.grid_length_y)]
         self.units = [[None for x in range(self.grid_length_x)] for y in range(self.grid_length_y)]
         self.resources_list = []
+
+        ################################
+        #          MULTIPLAYER         #
+        ################################
+        self.multi = multiplayer_enabled
+        # Vrai si on est l'hoste, Faux autrement
+        self.createur = is_host
 
         # Fog of war
         # self.visible = self.
@@ -58,9 +65,17 @@ class Map:
 
         # universal timer
         self.timer = 0
-        if IS_HOST:
+
+        ################################
+        #          MULTIPLAYER         #
+        ################################
+
+        #placement des points de départ
+        if self.createur:
             for p in player_list:
                 self.place_starting_units(p)
+                action = serialize(player_name=p.name, action="spawn", pos_x=p.towncenter_pos[0], pos_y=p.towncenter_pos[1])
+                # TO DO :fonction pour envoyer action au C
 
         #self.place_starting_units()
         #print("valeur deserialize AI1" + str(deserialize("AI2*spawn*0*0", self)))
@@ -201,7 +216,7 @@ class Map:
                             self.hud.selected_tile["name"] == "TownCenter" or \
                             self.hud.selected_tile["name"] == "Barracks" or self.hud.selected_tile["name"] == "Tower" or self.hud.selected_tile["name"] == "Wall"or self.hud.selected_tile["name"] == "Market":
                         working_villager.go_to_build(grid_pos, self.hud.selected_tile["name"])
-                        if MULTIPLAYER_MODE:
+                        if self.multi:
                             index = unit_to_list_index(working_villager)
                             pos_x = grid_pos[0]
                             pos_y = grid_pos[1]
@@ -1024,7 +1039,6 @@ class Map:
                 self.highlight_tile(grid[0], grid[1], screen, "GREEN", camera.scroll)
 
         # display the buildable building on the tile
-        print("color of the guy building", the_player.color)
         self.display_building(screen, self.temp_tile, camera.scroll, render_pos, the_player=the_player,
                               is_hypothetical_building=True)
 
