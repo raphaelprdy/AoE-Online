@@ -100,7 +100,7 @@ class Map:
                     resource = char_to_resource(str_map[grid_x][grid_y+len(str(grid_x))+1])
                     map_tile["tile"] = resource["tile"]
                     map_tile["variation"] = resource["variation"]
-
+                    map_tile["collision"] = True if not map_tile["tile"] == "grass" else False
                 # if tile is resource, we add it to resources_list, is used for display
                 if map_tile["tile"] != "" and map_tile["tile"] != "building" and map_tile["tile"] != "unit":
                     self.resources_list.append(map_tile)
