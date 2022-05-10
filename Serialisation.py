@@ -51,6 +51,14 @@ def deserialize(action: str, world=None) -> int:
         Returns: 0 si l action a été implémentée avec succès sur la map. -1 autrement (data transmises sans doute
         corrompues)
     """
+
+    if not verify_checksum(action):
+        #TODO faire la fonction pour faire renvoyer le message si checksum pas bon
+        return -1
+    else:
+        action = action.split("/")[0]
+
+
     words = action.split('*')
 
     player = name_to_player(words[0])
@@ -167,9 +175,6 @@ def verify_checksum(serialised_string):
         else:
             new_checksum += ord(serialised_string[i])
 
-    print(new_checksum)
-    print(old_checksum)
-
     return True if old_checksum == new_checksum else False
 
 
@@ -201,4 +206,4 @@ action = serialize(player_name="PlayerOne", action="attack",
 
 new_action = add_checksum(action)
 
-print(verify_checksum(new_action))
+deserialize(new_action)
