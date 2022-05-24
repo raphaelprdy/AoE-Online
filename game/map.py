@@ -71,12 +71,17 @@ class Map:
         ################################
 
         #placement des points de départ
+        print(player_list)
         if self.createur:
+            for p in player_list:
+                self.place_starting_units(the_player=p)
+                action = serialize(player_name=p.name, action="spawn", pos_x=p.towncenter_pos[0], pos_y=p.towncenter_pos[1])
+                # TO DO :fonction pour envoyer action au C
+        else:
             for p in player_list:
                 self.place_starting_units(p)
                 action = serialize(player_name=p.name, action="spawn", pos_x=p.towncenter_pos[0], pos_y=p.towncenter_pos[1])
                 # TO DO :fonction pour envoyer action au C
-
         #self.place_starting_units()
         #print("valeur deserialize AI1" + str(deserialize("AI2*spawn*0*0", self)))
         #print("valeur deserialize AI2 : " + str(deserialize("AI1*spawn*0*1", self)))
@@ -556,34 +561,54 @@ class Map:
 
         """
 
+        multi = True
         townhall_pos_determined = False
         top_left_pos = (0, 0)
         top_right_pos = (1, 0)
         bottom_left_pos = (0, 1)
         bottom_right_pos = (1, 1)
 
-        # TEST MODE should be disabled if we play a real game
-        if TEST_MODE:
-            #   Player 1 (red) is always TOP_LEFT
-            if the_player == playerTwo:
-                place_x = 0
-                place_y = 0
-                self.occupied_corners["TOP_LEFT"] = True
-
-            #   Player 2 (blue, us) is always TOP_RIGHT
-            elif the_player == playerOne:
+        if multi:
+            if the_player.color == "BLUE":
                 place_x = 1
                 place_y = 0
-                self.occupied_corners["TOP_RIGHT"] = True
-
-            #   Player 3 (yellow) is always BOTTOM_RIGHT
-            elif the_player == playerThree:
+            elif the_player.color == "RED":
+                place_x = 0
+                place_y = 0
+            elif the_player.color == "GREEN":
+                place_x = 1
+                place_y = 1
+            elif the_player.color == "YELLOW":
                 place_x = 0
                 place_y = 1
-                self.occupied_corners["BOTTOM_LEFT"] = True
+            #default : haut à gauche
+            else:
+                place_x = 0
+                place_y = 0
+        townhall_pos_determined = True
+
+        # TEST MODE should be disabled if we play a real game
+        #if TEST_MODE:
+            #   Player 1 (red) is always TOP_LEFT
+         #   if the_player == playerTwo:
+           #     place_x = 0
+           #     place_y = 0
+           #     self.occupied_corners["TOP_LEFT"] = True
+
+            #   Player 2 (blue, us) is always TOP_RIGHT
+           # elif the_player == playerOne:
+            #    place_x = 1
+           #     place_y = 0
+           #     self.occupied_corners["TOP_RIGHT"] = True
+
+            #   Player 3 (yellow) is always BOTTOM_RIGHT
+           # elif the_player == playerThree:
+            #    place_x = 0
+           #     place_y = 1
+           #     self.occupied_corners["BOTTOM_LEFT"] = True
 
             #to skip the random determination
-            townhall_pos_determined = True
+            #townhall_pos_determined = True
 
         if corner:
             townhall_pos_determined = True
