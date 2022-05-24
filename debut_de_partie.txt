@@ -1,0 +1,10 @@
+*- player1 créé la partie
+*- les clients se connectent au C
+""- ils entrent leur nom""
+- on leur choisit une couleur aléatoirement
+*- on transmet la map (ressources uniquement)    
+- on transmet la couleur
+- chaque ordi se place en fonction de sa couleur
+- on transmet (le nom et) la couleur de chacun des autres joueur
+- on crée localement un joueur correspondant
+- lancement réel de la partie
