@@ -8,7 +8,6 @@
 #include <arpa/inet.h>
 
 #define MAXLINE 1024
-#define SERVER "192.168.11.128"
 #define MAXCLI 3
 #define PORT 5003
 #define TRUE 1
@@ -37,10 +36,10 @@ void envoie_c(int sockfd, struct sockaddr_in cliaddr, char *message);
 void afficher_client();
 int isListFull(int *position);
 char *serialize_client();
-void enregistrer_autres_c(int *pos);
+void enregistrer_autres_c(int *pos, char *servaddr);
 
 
-int main(){
+int main(int argc, char **argv){
 
     //declare variables needed
     int sockfd, i, longueur, valread, position;
@@ -49,6 +48,8 @@ int main(){
     char connect[9] = "/connect";
     char conn[18] = "already connected";
     char full[21] = "la partie est pleine";
+
+    printf("Server address: %s\n", argv[1]);
 
 
     //initialize every client to a "null client"
@@ -61,7 +62,7 @@ int main(){
     sockfd = create_socket(INADDR_ANY, PORT);
 
     serverprincipal.sin_family = AF_INET;
-    serverprincipal.sin_addr.s_addr = inet_addr("192.168.11.128");
+    serverprincipal.sin_addr.s_addr = inet_addr(argv[1]);
     serverprincipal.sin_port = htons(5001);
 
 
@@ -72,6 +73,7 @@ int main(){
     longueur = sizeof(cliaddr);
 
     //pour initier la connection
+    printf("j'envoie au serveur principal\n");
     sendto(sockfd, connect, strlen(connect) + 1, 0, (struct sockaddr *)&serverprincipal, sizeof(serverprincipal));
 
     while(1){
@@ -115,7 +117,7 @@ int main(){
             else if(!strncmp(buffer, "/liste", strlen("/liste"))){
                 printf("le serveur principal m'envoie la liste des clients\n");
                 accept_client(sockfd, cliaddr, position);
-                enregistrer_autres_c(pos);
+                enregistrer_autres_c(pos, argv[1]);
                 envoie_c(sockfd, cliaddr, connect);
             }
             else{
@@ -281,7 +283,7 @@ char *serialize_client(){
 }
 
 
-void enregistrer_autres_c(int *pos){
+void enregistrer_autres_c(int *pos, char *servaddr){
 
     char **coords_cli = malloc(MAXCLI * sizeof(client));
     memset(coords_cli, 0, sizeof(coords_cli));
@@ -307,7 +309,7 @@ void enregistrer_autres_c(int *pos){
             printf("strtok: address: %s, port: %d\n", address, port);  
 
 
-            if(strncmp(address, SERVER, strlen(SERVER)) || port != PORT){
+            if(strncmp(address, servaddr, strlen(address)) || port != PORT){
                 if(!isListFull(pos)){
                     printf("liste non pleine\n");
                     // si le client n'est pas dans la liste
