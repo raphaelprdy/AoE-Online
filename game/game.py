@@ -13,7 +13,7 @@ import signal
 
 
 class Game:
-    def __init__(self, screen, clock, multi, createur, ip):
+    def __init__(self, screen, clock, multi, createur):
         self.screen = screen
         self.clock = clock
         self.width, self.height = self.screen.get_size()
@@ -136,13 +136,8 @@ class Game:
 
         self.timer = self.map.timer
 
-        ################################
-        #          MULTIPLAYER         #
-        ################################
+        #multi
         self.multi = multi
-        self.createur = createur
-        if self.multi:
-            self.network = Network(self.map, createur, ip)
 
         ################################
         #          CAMERA              #

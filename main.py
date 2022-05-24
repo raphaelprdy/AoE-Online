@@ -1,5 +1,6 @@
 from game.game import Game as g
 from settings import *
+from game.network import *
 #from .settings import WIDTH
 #from .settings import HEIGHT
 
@@ -23,7 +24,11 @@ def main(multi=True, createur=True, ip="192.168.11.139"):
     pygame.display.set_caption("Age of Empire: Homemade Edition")
     icon = pygame.image.load(os.path.join(common_path,'icon.png'))
     pygame.display.set_icon(icon)
-    game = g(screen, clock, multi, createur, ip)
+    game = g(screen, clock, multi, createur)
+    if multi:
+        network = Network(game.map, createur, ip)
+        game.network = network
+
 
 #Exit game
     running = True
