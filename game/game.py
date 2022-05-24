@@ -289,7 +289,8 @@ class Game:
                                     #print("Deserialization clear succès")
                                     pass
                                 else:
-                                    print("Code deserialize :" + "ECHEC deserialisation: action corrompue\n")
+                                    pass
+                                    #print("Code deserialize :" + "ECHEC deserialisation: action corrompue\n")
 
                     elif event.key == pygame.K_LCTRL:
                         #target position
