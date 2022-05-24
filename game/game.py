@@ -13,7 +13,7 @@ import signal
 
 
 class Game:
-    def __init__(self, screen, clock, multi, createur, ip):
+    def __init__(self, screen, clock, multi, createur):
         self.screen = screen
         self.clock = clock
         self.width, self.height = self.screen.get_size()
@@ -136,13 +136,8 @@ class Game:
 
         self.timer = self.map.timer
 
-        ################################
-        #          MULTIPLAYER         #
-        ################################
+        #multi
         self.multi = multi
-        self.createur = createur
-        if self.multi:
-            self.network = Network(self.map, createur, ip)
 
         ################################
         #          CAMERA              #
@@ -289,7 +284,8 @@ class Game:
                                     #print("Deserialization clear succès")
                                     pass
                                 else:
-                                    print("Code deserialize :" + "ECHEC deserialisation: action corrompue\n")
+                                    pass
+                                    #print("Code deserialize :" + "ECHEC deserialisation: action corrompue\n")
 
                     elif event.key == pygame.K_LCTRL:
                         #target position
@@ -316,16 +312,6 @@ class Game:
 
                         print(action)
                         deserialize(action, self.map)
-
-                    elif event.key == pygame.K_LALT:
-                        for x in range (0,50):
-                            for y in range (0,50):
-                                pseudo_serialize = ("Lucien*clear*"+str(x)+"*"+str(y))
-                                if not deserialize(pseudo_serialize, world=self.map):
-                                    #print("Deserialization clear succès")
-                                    pass
-                                else:
-                                    print("Code deserialize :" + "ECHEC deserialisation: action corrompue\n")
 
                     # Enable - Disable health bars
                     elif event.key == pygame.K_RALT:
