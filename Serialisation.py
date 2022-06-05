@@ -36,7 +36,7 @@ def serialize(player_name: str, action: str, entity=None, triggering_unit=None, 
         serialised_string += "*"
         serialised_string += str(pos_y)
 
-    return serialised_string
+    return add_checksum(serialised_string)
 
 
 # transforms a str created with the serialize method to the corresponding in-game action
@@ -201,9 +201,9 @@ def str_to_type(string):
 
 ##########################################################TESTS#########################################################
 
-action = serialize(player_name="PlayerOne", action="attack",
-                                                           triggering_unit=1, pos_x=25, pos_y=25)
+#action = serialize(player_name="PlayerOne", action="attack",
+#                                                           triggering_unit=1, pos_x=25, pos_y=25)
 
-new_action = add_checksum(action)
+#new_action = add_checksum(action)
 
-deserialize(new_action)
+#deserialize(new_action)
