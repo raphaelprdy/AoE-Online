@@ -6,6 +6,7 @@
 #include <errno.h>
 #include <netinet/in.h>
 #include <arpa/inet.h>
+#include <sys/ioctl.h>
 
 #define MAXLINE 1024
 #define MAXCLI 3
@@ -36,7 +37,8 @@ void envoie_c(int sockfd, struct sockaddr_in cliaddr, char *message);
 void afficher_client();
 int isListFull(int *position);
 char *serialize_client();
-void enregistrer_autres_c(int *pos, char *servaddr);
+void enregistrer_autres_c(int *pos, char *servaddr, char *myip);
+int getMyIP(int fd, char* ifname,  u_int32_t * ipaddr);
 
 
 int main(int argc, char **argv){
@@ -60,6 +62,13 @@ int main(int argc, char **argv){
 
     //create the socket that communicate with python and others c
     sockfd = create_socket(INADDR_ANY, PORT);
+
+    u_int32_t nip;
+    getMyIP(sockfd, "eth0", &nip);
+    struct in_addr in;
+    in.s_addr = nip;
+    char *cip = inet_ntoa(in);
+    printf("my ip is: %s\n", cip); 
 
     serverprincipal.sin_family = AF_INET;
     serverprincipal.sin_addr.s_addr = inet_addr(argv[1]);
@@ -117,7 +126,7 @@ int main(int argc, char **argv){
             else if(!strncmp(buffer, "/liste", strlen("/liste"))){
                 printf("le serveur principal m'envoie la liste des clients\n");
                 accept_client(sockfd, cliaddr, position);
-                enregistrer_autres_c(pos, argv[1]);
+                enregistrer_autres_c(pos, argv[1], cip);
                 envoie_c(sockfd, cliaddr, connect);
             }
             else{
@@ -135,6 +144,14 @@ int main(int argc, char **argv){
             }           
         }
     }    
+}
+
+int min(int a, int b)
+{
+    if(a < b)
+        return a;
+    else
+        return b;
 }
 
 
@@ -283,7 +300,7 @@ char *serialize_client(){
 }
 
 
-void enregistrer_autres_c(int *pos, char *servaddr){
+void enregistrer_autres_c(int *pos, char *servaddr, char *myip){
 
     char **coords_cli = malloc(MAXCLI * sizeof(client));
     memset(coords_cli, 0, sizeof(coords_cli));
@@ -308,8 +325,7 @@ void enregistrer_autres_c(int *pos, char *servaddr){
             port = atoi(strtok(NULL, ","));
             printf("strtok: address: %s, port: %d\n", address, port);  
 
-
-            if(strncmp(address, servaddr, strlen(address)) || port != PORT){
+            if(port != PORT || !(strncmp(address, servaddr, strlen(address)) || (strncmp(address, myip, strlen(myip))))){
                 if(!isListFull(pos)){
                     printf("liste non pleine\n");
                     // si le client n'est pas dans la liste
@@ -324,4 +340,25 @@ void enregistrer_autres_c(int *pos, char *servaddr){
             }        
         }
     }
+}
+
+
+int getMyIP(int fd, char* ifname,  u_int32_t * ipaddr) {
+  /* fd: opened file descriptor
+   * ifname: if name eg: "eth0"
+   */
+#define	IFNAMSIZ 16
+struct ifreq
+{
+    char	ifr_name[IFNAMSIZ];
+    struct	sockaddr ifr_addr;
+};
+  struct ifreq ifr;
+  memcpy(ifr.ifr_name,ifname,IFNAMSIZ);
+  if(ioctl(fd,SIOCGIFADDR,&ifr) == -1){
+    perror("getMyIP: ioctl" );
+    exit(-1);
+}
+  memcpy(ipaddr,&ifr.ifr_addr.sa_data[2],4);
+  return 0;
 }
