@@ -16,8 +16,9 @@ from Serialisation import *
 
 
 class Map:
-    def __init__(self, hud, entities, grid_length_x, grid_length_y, width, height, multiplayer_enabled: bool, is_host:bool, string_map = None):
+    def __init__(self, hud, entities, grid_length_x, grid_length_y, width, height, multiplayer_enabled: bool, is_host:bool, string_map = None, network = None):
         self.hud = hud
+        self.network = network
         # 4 booleans for corners. each corner becomes true when a player occupies at the beginning of the game
         self.occupied_corners = {"TOP_LEFT": False, "TOP_RIGHT": False, "BOTTOM_LEFT": False, "BOTTOM_RIGHT": False}
         self.entities = entities
@@ -228,6 +229,7 @@ class Map:
                             action = serialize(player_name=working_villager.owner.name, action="build",
                                                entity=self.hud.selected_tile["name"], triggering_unit=index, pos_x=pos_x, pos_y=pos_y)
                             print(action)
+                            self.network.send_action(action)
                     self.hud.selected_tile = None
 
         # the player hasn't selected something to build, we check if he selected a building/unit
@@ -795,8 +797,9 @@ class Map:
         self.map[grid_x][grid_y]["variation"] = 0
         self.collision_matrix[grid_y][grid_x] = 1
         self.map[grid_x][grid_y]["collision"] = False
-
-        #serialize(MAIN_PLAYER, action="clear", pos_x=grid_x,pos_y=grid_y)
+        if self.multi:
+            action = serialize(MAIN_PLAYER, action="clear", pos_x=grid_x,pos_y=grid_y)
+            self.network.send_action(action)
 
     # returns true if there is collision, else False
     def is_there_collision(self, grid_pos):
