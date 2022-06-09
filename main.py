@@ -7,7 +7,7 @@ from game.network import *
 # to force push : git push -f origin branch_name (our branch name is name)
 
 
-def main(multi=False, createur=True, ip="192.168.11.145"):
+def main(multi=True, createur=False, ip="192.168.11.145"):
     print("test")
     #intialize pygame
     pygame.init()
@@ -29,8 +29,7 @@ def main(multi=False, createur=True, ip="192.168.11.145"):
         network = Network(game.map, createur, ip)
         game.network = network
 
-     #while 1:
-      #  pass
+
 
 
 #Exit game
