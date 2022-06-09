@@ -29,8 +29,7 @@ def main(multi=True, createur=False, ip="192.168.11.145"):
         network = Network(game.map, createur, ip)
         game.network = network
 
-    while 1:
-        pass
+    
 
 
 #Exit game

@@ -27,25 +27,25 @@ def fonction_menu_principal() :
     dezoom2 = int(1114/sheight )
     
 
-    img = PhotoImage(file="resources\imagemenu\BG.gif").subsample(dezoom,dezoom2)
+    img = PhotoImage(file="resources/imagemenu/BG.gif").subsample(dezoom,dezoom2)
     graphe.create_image(swidth/2,sheight/2, image=img)
 
-    img2 = PhotoImage(file="resources\imagemenu\mainmenuholder_1.gif").subsample(dezoom,dezoom2)
+    img2 = PhotoImage(file="resources/imagemenu/mainmenuholder_1.gif").subsample(dezoom,dezoom2)
     graphe.create_image(swidth*0.18,sheight*.8, image=img2)
 
-    img3 = PhotoImage(file="resources\imagemenu\mainmenuholder_2.gif").subsample(dezoom,dezoom2)
+    img3 = PhotoImage(file="resources/imagemenu/mainmenuholder_2.gif").subsample(dezoom,dezoom2)
     graphe.create_image(swidth*0.1795,sheight*.704, image=img3)
 
-    img4 = PhotoImage(file="resources\imagemenu\mainmenuholder_2.gif").subsample(dezoom,dezoom2)
+    img4 = PhotoImage(file="resources/imagemenu/mainmenuholder_2.gif").subsample(dezoom,dezoom2)
     graphe.create_image(swidth*0.1795,sheight*.65, image=img4)
 
-    img5 = PhotoImage(file="resources\imagemenu\mainmenuholder_2.gif").subsample(dezoom,dezoom2)
+    img5 = PhotoImage(file="resources/imagemenu/mainmenuholder_2.gif").subsample(dezoom,dezoom2)
     graphe.create_image(swidth*0.1795,sheight*.59, image=img5)
 
-    img6 = PhotoImage(file="resources\imagemenu\mainmenuholder_2.gif").subsample(dezoom,dezoom2)
+    img6 = PhotoImage(file="resources/imagemenu/mainmenuholder_2.gif").subsample(dezoom,dezoom2)
     graphe.create_image(swidth*0.1795,sheight*.5, image=img6)
 
-    img7 = PhotoImage(file="resources\imagemenu\mainmenuholder_3.gif").subsample(dezoom,dezoom2)
+    img7 = PhotoImage(file="resources/imagemenu/mainmenuholder_3.gif").subsample(dezoom,dezoom2)
     graphe.create_image(swidth*0.18,sheight*.41, image=img7)
 
     graphe.pack()
@@ -76,7 +76,7 @@ def Nouvelpartie(fen,w,h):
   
     graphe2=Canvas(fen2, width=w, height=h,bg="white")
 
-    img2 = PhotoImage(file="resources\imagemenu\parametre.gif").zoom(1,1)
+    img2 = PhotoImage(file="resources/imagemenu/parametre.gif").zoom(1,1)
     graphe2.create_image(w/2,h/2, image=img2)
 
     graphe2.pack()
@@ -173,14 +173,18 @@ def Multiplayer(fen,w,h):
             graphe3.create_text(w*.5, h*.62,text="Joueurs de la partie :",font=('Arial',"13"),anchor="n",fill="white",tags="u")
         
         entry1.delete(0,END)
-    
-    def lancement():
-        pass
+        deco=Button(fen3,text='Deconnexion', bg="burlywood4", width=44, height=1, font='arial',command=lambda:deconnexion())
+        deco.place(x=w*.39, y=h*.76)
+        partie=Button(fen3,text='Rejoindre la Partie', bg="burlywood4", width=44, height=1, font='arial',command=lambda:main.main(True,False,text))
+        partie.place(x=w*.39, y=h*.8)
+        
+
     
     def deconnexion():
         graphe3.delete("w")
         graphe3.delete("u")
         graphe3.delete("v")
+       
 
 
     fen.destroy()
@@ -190,26 +194,25 @@ def Multiplayer(fen,w,h):
     fen3.resizable(width=False,height=False)
   
     graphe3=Canvas(fen3, width=w, height=h,bg="white")
-    img = PhotoImage(file="resources\imagemenu\campaign.png").zoom(1,1)
+    img = PhotoImage(file="resources/imagemenu/campaign.png").zoom(1,1)
     graphe3.create_image(w/2,h/2, image=img)
 
-    img3 = PhotoImage(file="resources\imagemenu\multipanel.png")
+    img3 = PhotoImage(file="resources/imagemenu/multipanel.png")
     
     graphe3.create_image(w*0.5,h*.47, image=img3)
 
     graphe3.pack()
 
-    graphe3.create_text(w*.5, h*.43,text="Adresse IP de l'hôte",font=('Arial',"15"),anchor="n")
+    graphe3.create_text(w*.5, h*.4,text="Adresse IP de l'hôte",font=('Arial',"15"),anchor="n")
     entry1 = Entry(fen3,width=45,background="burlywood1")
-    entry1.place(x=w*.425, y=h*.45)
+    entry1.place(x=w*.4, y=h*.44)
 
     game=Button(fen3,text='Rejoindre', bg="burlywood4", width=44, height=1, font='arial',command=lambda:rejoindre_cmd())
     game.place(x=w*.39, y=h*.47)
-    deco=Button(fen3,text='Deconnexion', bg="burlywood4", width=44, height=1, font='arial',command=lambda:deconnexion())
-    deco.place(x=w*.39, y=h*.76)
-    partie=Button(fen3,text='Lancer la Partie', bg="burlywood4", width=44, height=1, font='arial',command=lambda:lancement())
-    partie.place(x=w*.39, y=h*.8)
+    
 
+    host=Button(fen3,text='Créer la partie', bg="burlywood4", width=44, height=1, font='arial',command=lambda:main.main(True,True,))
+    host.place(x=w*.39, y=h*.3)
     exit=Button(fen3,text='retour', bg="brown3", width=14, height=1, font='arial',command=lambda:fonction_retour(fen3))
     exit.place(x=w*.90, y=h*.90)
 
