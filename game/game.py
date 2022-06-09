@@ -127,7 +127,7 @@ class Game:
                         "48/_________052875583_____H1____35794564712586363987_/3469/3842",
                         "49/________8105668179_0_________2362303735484233134__/3457/3933"]
         # map
-        self.map = Map(self.hud, self.entities, grid_length_x=50, grid_length_y=50, width=self.width, height=self.height, string_map=self.str_map, multiplayer_enabled=multi, is_host=createur, network=self.network)
+        self.map = Map(self.hud, self.entities, grid_length_x=50, grid_length_y=50, width=self.width, height=self.height, string_map=self.str_map, multiplayer_enabled=multi, is_host=createur)
 
 
         # camera
@@ -333,7 +333,73 @@ class Game:
                     elif self.map.hud.optimize_button_rect.collidepoint(mouse_pos):
                         print("TEST BUTTON")
                         self.map.hud.minimap_enabled = False if self.map.hud.minimap_enabled else True
+                    ##TEST
+                    # the player selects a building in the hud
+                    if self.hud.selected_tile is not None and self.hud.examined_tile is not None \
+                            and ((self.hud.examined_tile.owner == MAIN_PLAYER)
+                                 or TEST_MODE):
+                        grid_pos = self.map.mouse_to_grid(mouse_pos[0], mouse_pos[1], self.map.camera.scroll)
 
+                        # we change action_panel depending on the selected entity
+                        if self.map.can_place_tile(grid_pos):
+                            if self.hud.examined_tile.name == "Villager":
+                                self.hud.bottom_left_menu = self.hud.villager_panel
+                            elif self.hud.examined_tile.name == "Town Center":
+                                self.hud.bottom_left_menu = self.hud.town_hall_panel
+                            elif self.hud.examined_tile.name == "Barracks":
+                                self.hud.bottom_left_menu = self.hud.barracks_panel
+                            elif self.hud.examined_tile.name == "Market":
+                                self.hud.bottom_left_menu = self.hud.market_panel
+                            elif self.hud.examined_tile.name == "Wall":
+                                self.hud.bottom_left_menu = self.hud.wall_panel
+
+                            else:
+                                self.hud.bottom_left_menu = None
+
+                            image = self.hud.selected_tile["image"].copy()
+                            name = self.hud.selected_tile["name"]
+                            # setting transparency to make sure player understands it's not built
+                            image.set_alpha(100)
+                            collision = None
+                            if grid_pos[0] < self.map.grid_length_x and grid_pos[1] < self.map.grid_length_y:
+                                render_pos = self.map.map[grid_pos[0]][grid_pos[1]]["render_pos"]
+                                iso_poly = self.map.map[grid_pos[0]][grid_pos[1]]["iso_poly"]
+                                collision = self.map.is_there_collision(grid_pos)
+
+                                self.temp_tile = {
+                                    "name": name,
+                                    "image": image,
+                                    "render_pos": render_pos,
+                                    "iso_poly": iso_poly,
+                                    "collision": collision
+                                }
+
+                            else:
+                                pass
+                            # if we left_click to build : the villager goes to an adjacent tile and the building is created
+                            if not collision:
+                                working_villager = self.hud.examined_tile
+
+                                # we store the future building information inside building_to_create
+                                if self.hud.selected_tile["name"] == "Farm" or self.hud.selected_tile[
+                                    "name"] == "House" or \
+                                        self.hud.selected_tile["name"] == "TownCenter" or \
+                                        self.hud.selected_tile["name"] == "Barracks" or self.hud.selected_tile[
+                                    "name"] == "Tower" or self.hud.selected_tile["name"] == "Wall" or \
+                                        self.hud.selected_tile["name"] == "Market":
+                                    working_villager.go_to_build(grid_pos, self.hud.selected_tile["name"])
+                                    if self.multi:
+                                        index = unit_to_list_index(working_villager)
+                                        pos_x = grid_pos[0]
+                                        pos_y = grid_pos[1]
+                                        action = serialize(player_name=working_villager.owner.name, action="build",
+                                                           entity=self.hud.selected_tile["name"],
+                                                           triggering_unit=index, pos_x=pos_x, pos_y=pos_y)
+                                        print(action)
+                                        self.network.send_action(action)
+                                self.hud.selected_tile = None
+
+                ##FINTEST
                 # if we left click on the action panel and a building/unit is selected
                 if self.hud.bottom_left_menu is not None and self.map.hud.examined_tile is not None:
                     entity = self.map.hud.examined_tile
@@ -358,14 +424,8 @@ class Game:
                                         # if it was villager button, we train one
                                         if button["name"] == "Villager" and not self.hud.examined_tile.is_being_built:
                                             entity.train(Villager)
-                                            if self.multi:
-                                                action = serialize(MAIN_PLAYER.name, "train", "Villager")
-                                                self.network.send_action(action)
                                         elif button["name"] == "Clubman" and not self.hud.examined_tile.is_being_built:
                                             entity.train(Clubman)
-                                            if self.multi:
-                                                action = serialize(MAIN_PLAYER.name, "train", "Clubman")
-                                                self.network.send_action(action)
                                         # if it was an advancement research, we... research it. Makes sense right ?
                                         elif button["name"] == "Advance to Feudal Age" \
                                                 or button["name"] == "Advance to Castle Age"\

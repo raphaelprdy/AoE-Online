@@ -16,9 +16,8 @@ from Serialisation import *
 
 
 class Map:
-    def __init__(self, hud, entities, grid_length_x, grid_length_y, width, height, multiplayer_enabled: bool, is_host:bool, string_map = None, network = None):
+    def __init__(self, hud, entities, grid_length_x, grid_length_y, width, height, multiplayer_enabled: bool, is_host:bool, string_map = None):
         self.hud = hud
-        self.network = network
         # 4 booleans for corners. each corner becomes true when a player occupies at the beginning of the game
         self.occupied_corners = {"TOP_LEFT": False, "TOP_RIGHT": False, "BOTTOM_LEFT": False, "BOTTOM_RIGHT": False}
         self.entities = entities
@@ -228,9 +227,14 @@ class Map:
                             pos_y = grid_pos[1]
                             action = serialize(player_name=working_villager.owner.name, action="build",
                                                entity=self.hud.selected_tile["name"], triggering_unit=index, pos_x=pos_x, pos_y=pos_y)
-                            print(action)
-                            self.network.send_action(action)
                     self.hud.selected_tile = None
+
+
+        # the player selects a building in the hud
+        if self.hud.selected_tile is not None and self.hud.examined_tile is not None \
+                and ((self.hud.examined_tile.owner == MAIN_PLAYER)
+                     or TEST_MODE):
+            grid_pos = self.mouse_to_grid(mouse_pos[0], mouse_pos[1], camera.scroll)
 
         # the player hasn't selected something to build, we check if he selected a building/unit
         else:
