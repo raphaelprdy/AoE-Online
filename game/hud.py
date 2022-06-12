@@ -260,6 +260,7 @@ class Hud:
         mouse_pos = pygame.mouse.get_pos()[0], pygame.mouse.get_pos()[1]
         mouse_action = pygame.mouse.get_pressed()
         # deselection by right-clicking
+
         if mouse_action[2]:
             self.selected_tile = None
 

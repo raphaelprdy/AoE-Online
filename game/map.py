@@ -228,8 +228,14 @@ class Map:
                             pos_y = grid_pos[1]
                             action = serialize(player_name=working_villager.owner.name, action="build",
                                                entity=self.hud.selected_tile["name"], triggering_unit=index, pos_x=pos_x, pos_y=pos_y)
-                            print(action)
                     self.hud.selected_tile = None
+
+
+        # the player selects a building in the hud
+        if self.hud.selected_tile is not None and self.hud.examined_tile is not None \
+                and ((self.hud.examined_tile.owner == MAIN_PLAYER)
+                     or TEST_MODE):
+            grid_pos = self.mouse_to_grid(mouse_pos[0], mouse_pos[1], camera.scroll)
 
         # the player hasn't selected something to build, we check if he selected a building/unit
         else:
@@ -796,8 +802,9 @@ class Map:
         self.map[grid_x][grid_y]["variation"] = 0
         self.collision_matrix[grid_y][grid_x] = 1
         self.map[grid_x][grid_y]["collision"] = False
-
-        #serialize(MAIN_PLAYER, action="clear", pos_x=grid_x,pos_y=grid_y)
+        if self.multi:
+            action = serialize(MAIN_PLAYER, action="clear", pos_x=grid_x,pos_y=grid_y)
+            self.network.send_action(action)
 
     # returns true if there is collision, else False
     def is_there_collision(self, grid_pos):

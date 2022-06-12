@@ -333,7 +333,73 @@ class Game:
                     elif self.map.hud.optimize_button_rect.collidepoint(mouse_pos):
                         print("TEST BUTTON")
                         self.map.hud.minimap_enabled = False if self.map.hud.minimap_enabled else True
+                    ##TEST
+                    # the player selects a building in the hud
+                    if self.hud.selected_tile is not None and self.hud.examined_tile is not None \
+                            and ((self.hud.examined_tile.owner == MAIN_PLAYER)
+                                 or TEST_MODE):
+                        grid_pos = self.map.mouse_to_grid(mouse_pos[0], mouse_pos[1], self.map.camera.scroll)
 
+                        # we change action_panel depending on the selected entity
+                        if self.map.can_place_tile(grid_pos):
+                            if self.hud.examined_tile.name == "Villager":
+                                self.hud.bottom_left_menu = self.hud.villager_panel
+                            elif self.hud.examined_tile.name == "Town Center":
+                                self.hud.bottom_left_menu = self.hud.town_hall_panel
+                            elif self.hud.examined_tile.name == "Barracks":
+                                self.hud.bottom_left_menu = self.hud.barracks_panel
+                            elif self.hud.examined_tile.name == "Market":
+                                self.hud.bottom_left_menu = self.hud.market_panel
+                            elif self.hud.examined_tile.name == "Wall":
+                                self.hud.bottom_left_menu = self.hud.wall_panel
+
+                            else:
+                                self.hud.bottom_left_menu = None
+
+                            image = self.hud.selected_tile["image"].copy()
+                            name = self.hud.selected_tile["name"]
+                            # setting transparency to make sure player understands it's not built
+                            image.set_alpha(100)
+                            collision = None
+                            if grid_pos[0] < self.map.grid_length_x and grid_pos[1] < self.map.grid_length_y:
+                                render_pos = self.map.map[grid_pos[0]][grid_pos[1]]["render_pos"]
+                                iso_poly = self.map.map[grid_pos[0]][grid_pos[1]]["iso_poly"]
+                                collision = self.map.is_there_collision(grid_pos)
+
+                                self.temp_tile = {
+                                    "name": name,
+                                    "image": image,
+                                    "render_pos": render_pos,
+                                    "iso_poly": iso_poly,
+                                    "collision": collision
+                                }
+
+                            else:
+                                pass
+                            # if we left_click to build : the villager goes to an adjacent tile and the building is created
+                            if not collision:
+                                working_villager = self.hud.examined_tile
+
+                                # we store the future building information inside building_to_create
+                                if self.hud.selected_tile["name"] == "Farm" or self.hud.selected_tile[
+                                    "name"] == "House" or \
+                                        self.hud.selected_tile["name"] == "TownCenter" or \
+                                        self.hud.selected_tile["name"] == "Barracks" or self.hud.selected_tile[
+                                    "name"] == "Tower" or self.hud.selected_tile["name"] == "Wall" or \
+                                        self.hud.selected_tile["name"] == "Market":
+                                    working_villager.go_to_build(grid_pos, self.hud.selected_tile["name"])
+                                    if self.multi:
+                                        index = unit_to_list_index(working_villager)
+                                        pos_x = grid_pos[0]
+                                        pos_y = grid_pos[1]
+                                        action = serialize(player_name=working_villager.owner.name, action="build",
+                                                           entity=self.hud.selected_tile["name"],
+                                                           triggering_unit=index, pos_x=pos_x, pos_y=pos_y)
+                                        print(action)
+                                        self.network.send_action(action)
+                                self.hud.selected_tile = None
+
+                ##FINTEST
                 # if we left click on the action panel and a building/unit is selected
                 if self.hud.bottom_left_menu is not None and self.map.hud.examined_tile is not None:
                     entity = self.map.hud.examined_tile
@@ -383,7 +449,8 @@ class Game:
                                                 or button["name"] == "Research Iron Horseshoes" \
                                                 or button["name"] == "Research Super Cows":
                                             entity.research_tech(button["name"])
-                                            serialize(playerOne.name, "research", button["name"])
+
+
                                             if self.multi:
                                                 action = serialize(playerOne.name, "research", button["name"])
                                                 self.network.send_action(action)
@@ -461,7 +528,7 @@ class Game:
                                         index = unit_to_list_index(this_villager)
                                         action = serialize(player_name=this_villager.owner.name, action="move",
                                                            triggering_unit=index, pos_x=grid_pos[0], pos_y=grid_pos[1])
-                                        print(action)
+
                                         self.network.send_action(action)
 
                                 # we check if the tile we right click on is a ressource and if its on an adjacent tile of
@@ -478,7 +545,7 @@ class Game:
                                         index = unit_to_list_index(this_villager)
                                         action = serialize(player_name=this_villager.owner.name, action="gather",
                                                            triggering_unit=index, pos_x=pos_x, pos_y=pos_y)
-                                        print(action)
+
                                         self.network.send_action(action)
 
 
