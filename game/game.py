@@ -556,6 +556,11 @@ class Game:
                                             and this_villager.owner.towncenter.pos[1] <= pos_y <=
                                         this_villager.owner.towncenter.pos[1]-1):
                                     this_villager.go_to_townhall()
+                                    if self.multi:
+                                        index = unit_to_list_index(this_villager)
+                                        action = serialize(player_name=this_villager.owner.name, action="townhall",
+                                                           triggering_unit=index)
+                                        self.network.send_action(action)
 
     def update(self):
         self.camera.update()
