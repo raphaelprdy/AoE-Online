@@ -443,6 +443,7 @@ class Map:
             "render_pos": [minx, miny],
             "tile": tile,
             "collision": False if tile == "" else True,
+            "locked_by": "",
             "max_health": 10,
             "health": 10,
             "variation": variation if tile != "" else 0,
@@ -1222,7 +1223,7 @@ class Map:
         elif unit.is_gathering:
             tile_type = self.map[unit.targeted_ressource[0]][unit.targeted_ressource[1]]["tile"]
             #mining
-            # mining villager
+            """# mining villager
             if tile_type == "gold" or tile_type == "rock":
                 animation_pos = (self.grid_to_renderpos(unit.pos[0], unit.pos[1]))
                 animation_pos = (
@@ -1230,9 +1231,9 @@ class Map:
                     animation_pos[1] - (
                             self.hud.mining_sprites_villager["RED"]["0"][0].get_height() - TILE_SIZE) + camera.scroll.y - 25)
                 unit.mining_animation.play(animation_pos)
-
+            """
             #cutting wood or berrybush
-            elif tile_type == "tree" or tile_type == "berrybush":
+            if tile_type == "tree" or tile_type == "berrybush" or tile_type == "gold" or tile_type == "rock":
                 animation_pos = (self.grid_to_renderpos(unit.pos[0], unit.pos[1]))
                 animation_pos = (
                     animation_pos[0] + self.grass_tiles.get_width() / 2 + camera.scroll.x + 25,
