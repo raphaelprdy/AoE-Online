@@ -880,6 +880,7 @@ class Villager(Unit):
         self.building_to_create["has_construction_started"] = True
 
     def go_to_ressource(self, pos):
+
         # if the ressource is near us, we directly gather it
         if (abs(pos[0] - self.pos[0]) <= 1 and abs(pos[1] - self.pos[1]) == 0) or \
                 (abs(pos[0] - self.pos[0]) == 0 and abs(pos[1] - self.pos[1]) <= 1):
@@ -914,34 +915,47 @@ class Villager(Unit):
     def gather_ressources(self):
         if self.targeted_ressource is not None and type(self.targeted_ressource) != Villager:
             this_target = self.map.map[self.targeted_ressource[0]][self.targeted_ressource[1]]
-            self.angle = get_angle_between(self.pos, self.targeted_ressource)
+            
+            if (not self.map.multi) or (self.map.multi and (\
+                    (not this_target["locked_by"] or (this_target["locked_by"] == self.owner.name)))):
 
-            if self.is_gathering and (self.now - self.attack_cooldown > self.attack_speed):
+                self.angle = get_angle_between(self.pos, self.targeted_ressource)
 
-                if this_target["health"] > self.attack_dmg:
-                    this_target["health"] -= self.attack_dmg
-                    self.attack_cooldown = self.now
-                # no resource is remaining, we destroy it and give resource to the player:
-                else:
-                    if this_target["tile"] == "tree":
-                        self.stack_type = "tree"
-                        self.gathered_ressource_stack += 10
-                    elif this_target["tile"] == "rock":
-                        self.stack_type = "rock"
-                        self.gathered_ressource_stack += 10
-                    elif this_target["tile"] == "gold":
-                        self.stack_type = "gold"
-                        self.gathered_ressource_stack += 10
-                    elif this_target["tile"] == "berrybush":
-                        self.stack_type = "berrybush"
-                        self.gathered_ressource_stack += 10
+                this_target["locked_by"] = self.owner.name
 
-                    this_target["tile"] = ""
-                    this_target["collision"] = False
-                    self.map.collision_matrix[this_target["grid"][1]][this_target["grid"][0]] = 1
-                    self.targeted_ressource = None
-                    self.is_gathering = False
-                    self.attack_animation.to_be_played = False
+                if self.is_gathering and (self.now - self.attack_cooldown > self.attack_speed):
+
+                    if this_target["health"] > self.attack_dmg:
+                        this_target["health"] -= self.attack_dmg
+                        self.attack_cooldown = self.now
+                    # no resource is remaining, we destroy it and give resource to the player:
+                    else:
+                        if this_target["tile"] == "tree":
+                            self.stack_type = "tree"
+                            self.gathered_ressource_stack += 10
+                        elif this_target["tile"] == "rock":
+                            self.stack_type = "rock"
+                            self.gathered_ressource_stack += 10
+                        elif this_target["tile"] == "gold":
+                            self.stack_type = "gold"
+                            self.gathered_ressource_stack += 10
+                        elif this_target["tile"] == "berrybush":
+                            self.stack_type = "berrybush"
+                            self.gathered_ressource_stack += 10
+
+                        this_target["tile"] = ""
+                        this_target["collision"] = False
+                        this_target["locked_by"] = ""
+                        self.map.collision_matrix[this_target["grid"][1]][this_target["grid"][0]] = 1
+                        self.targeted_ressource = None
+                        self.is_gathering = False
+                        self.attack_animation.to_be_played = False
+            
+            else :
+                self.targeted_ressource = None
+                self.is_gathering = False
+                self.attack_animation.to_be_played = False
+
 
     def update(self):
         self.now = pygame.time.get_ticks()

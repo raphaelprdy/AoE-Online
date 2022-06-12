@@ -540,13 +540,19 @@ class Game:
                                         (this_villager.stack_type is None or
                                          this_villager.stack_type == self.map.map[pos_x][pos_y]["tile"]):
 
-                                    this_villager.go_to_ressource((pos_x, pos_y))
-                                    if self.multi:
-                                        index = unit_to_list_index(this_villager)
-                                        action = serialize(player_name=this_villager.owner.name, action="gather",
-                                                           triggering_unit=index, pos_x=pos_x, pos_y=pos_y)
+                                    if self.multi :
+                                        if not self.map.map[pos_x][pos_y]["locked_by"]:
+                                            this_villager.go_to_ressource((pos_x, pos_y))
+                                            index = unit_to_list_index(this_villager)
+                                            action = serialize(player_name=this_villager.owner.name, action="gather",
+                                                            triggering_unit=index, pos_x=pos_x, pos_y=pos_y)
 
-                                        self.network.send_action(action)
+                                            self.network.send_action(action)
+                                    
+                                    else :
+                                        this_villager.go_to_ressource((pos_x, pos_y))
+    
+                                    
 
 
 
