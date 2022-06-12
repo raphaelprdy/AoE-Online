@@ -802,9 +802,11 @@ class Map:
         self.map[grid_x][grid_y]["variation"] = 0
         self.collision_matrix[grid_y][grid_x] = 1
         self.map[grid_x][grid_y]["collision"] = False
+        """
         if self.multi:
             action = serialize(MAIN_PLAYER, action="clear", pos_x=grid_x,pos_y=grid_y)
             self.network.send_action(action)
+        """
 
     # returns true if there is collision, else False
     def is_there_collision(self, grid_pos):
