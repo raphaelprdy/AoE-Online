@@ -12,6 +12,26 @@ from game.animation import BuildingDeathAnimation, VillagerAttackAnimation, Vill
     IdleDragonAnimation, DeathDragonAnimation
 
 
+def str_tech_to_tech(tech: str):
+    if tech == "Research Improved Masonry":
+        return improved_masonry_tech
+    elif tech == "Research Reinforced Masonry":
+        return reinforced_masonry_tech
+    elif tech == "Research Imbued Masonry":
+        return imbued_masonry_tech
+    elif tech == "Research Iron Swords":
+        return iron_sword_tech
+    elif tech == "Research Steel Swords":
+        return steel_sword_tech
+    elif tech == "Research Mithril Swords":
+        return mithril_sword_tech
+    elif tech == "Research Iron Armors":
+        return iron_armor_tech
+    elif tech == "Research Steel Armors":
+        return steel_armor_tech
+    elif tech == "Research Mithril Armors":
+        return mithril_armor_tech
+
 #met implémente la collision dans map.map et map.collision_matrix. Par défaut, le bâtiment 1x1 est traité, sinon il faut
 #spécifier la taille
 def set_collision_building(building_pos: (int, int), map, building_size: int = 1):
@@ -222,6 +242,8 @@ class TownCenter(Building):
         elif tech == "Advance to Imperial Age":
             tech = Age_IV
             self.owner.age = 4
+        else:
+            tech = str_tech_to_tech(tech)
 
         for resource_type in range(0, 3):
             self.owner.resources[resource_type] -= tech.construction_costs[resource_type]
