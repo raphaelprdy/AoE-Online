@@ -48,8 +48,8 @@ class Map:
         # self.visible = self.
         # self.fog = False
         #self.map = self.create_map(string_map)
-        #self.stra_map = self.convert_map_to_str(self.map)
-        self.map = self.create_map()
+        self.map = self.create_map(string_map)
+        self.stra_map = self.convert_map_to_str(self.map)
         self.minimap_panel_width = scale_image(minimap_panel, h= 0.25*self.height).get_width()
 
         self.camera = None
@@ -105,7 +105,8 @@ class Map:
                     resource = char_to_resource(str_map[grid_x][grid_y+len(str(grid_x))+1])
                     map_tile["tile"] = resource["tile"]
                     map_tile["variation"] = resource["variation"]
-                    map_tile["collision"] = True if not map_tile["tile"] == "grass" else False
+                    map_tile["collision"] = False if map_tile["tile"] == "" else True
+                    
                 # if tile is resource, we add it to resources_list, is used for display
                 if map_tile["tile"] != "" and map_tile["tile"] != "building" and map_tile["tile"] != "unit":
                     self.resources_list.append(map_tile)

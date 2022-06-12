@@ -2,6 +2,7 @@ from encodings import utf_8
 from socket import *
 import time
 import subprocess
+from .utils import print_str_map
 
 from Serialisation import serialize, deserialize
 import signal
@@ -12,9 +13,11 @@ PID = None
 
 
 class Network():
-    def __init__(self, map, createur, ip):
+    def __init__(self, map, createur, servip):
         self.createur = createur
         self.map = map
+        self.not_ready = True
+        self.newmap = []
         
 
 
@@ -32,6 +35,7 @@ class Network():
         self.sockfd.setblocking(0)
 
         msg_connect = "/connect"
+        msg_map = "/askmap"
         
 
         
@@ -39,7 +43,7 @@ class Network():
         if self.createur:
             process = subprocess.Popen(['./socketenc_main', '/'], shell=True)
         else:
-            process = subprocess.Popen(['./socketenc_2 ' + str(ip), '/'], shell=True)
+            process = subprocess.Popen(['./socketenc_2 ' + str(servip), '/'], shell=True)
 
         global PID
         PID = int(process.pid)
@@ -52,6 +56,7 @@ class Network():
             self.serverAddr = ("127.0.0.1", 5003)
         print('sending to serv: ' + str(self.serverAddr))
         self.sockfd.sendto(msg_connect.encode("utf8"), self.serverAddr)
+        
 
 
 
@@ -61,9 +66,24 @@ class Network():
             data = data.decode("utf8")
             data = data[:-1]
             print("received message: " + str(data))
-            deserialize(data, self.map)
+            if data == "/askmap":
+                map_list = self.map.stra_map
+                #print_str_map(map_list)
+                for ligne in map_list:
+                    print(str(ligne))
+                    msg_send_map = "/sendmap " + str(ligne)
+                    self.send_action(msg_send_map)
+                self.send_action("/endmap")
+            elif data[:8] == "/sendmap":
+                self.newmap.append(str(data[9:]))
+            elif data[:7] == "/endmap":
+                print_str_map(self.newmap)
+                self.not_ready = False
+            else:
+                deserialize(data, self.map)
         except BlockingIOError:
             pass
+    
     
 
     def send_action(self, action):
