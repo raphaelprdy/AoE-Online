@@ -13,7 +13,7 @@ import signal
 
 
 class Game:
-    def __init__(self, screen, clock, multi, createur):
+    def __init__(self, screen, clock, multi, createur, str_map=None):
         self.screen = screen
         self.clock = clock
         self.width, self.height = self.screen.get_size()
@@ -127,7 +127,7 @@ class Game:
                         "48/_________052875583_____H1____35794564712586363987_/3469/3842",
                         "49/________8105668179_0_________2362303735484233134__/3457/3933"]
         # map
-        self.map = Map(self.hud, self.entities, grid_length_x=50, grid_length_y=50, width=self.width, height=self.height, string_map=self.str_map, multiplayer_enabled=multi, is_host=createur)
+        self.map = Map(self.hud, self.entities, grid_length_x=50, grid_length_y=50, width=self.width, height=self.height, string_map=str_map, multiplayer_enabled=multi, is_host=createur)
 
 
         # camera
@@ -358,8 +358,14 @@ class Game:
                                         # if it was villager button, we train one
                                         if button["name"] == "Villager" and not self.hud.examined_tile.is_being_built:
                                             entity.train(Villager)
+                                            if self.multi:
+                                                action = serialize(MAIN_PLAYER.name, "train", "Villager")
+                                                self.network.send_action(action)
                                         elif button["name"] == "Clubman" and not self.hud.examined_tile.is_being_built:
                                             entity.train(Clubman)
+                                            if self.multi:
+                                                action = serialize(MAIN_PLAYER.name, "train", "Clubman")
+                                                self.network.send_action(action)
                                         # if it was an advancement research, we... research it. Makes sense right ?
                                         elif button["name"] == "Advance to Feudal Age" \
                                                 or button["name"] == "Advance to Castle Age"\
@@ -378,6 +384,9 @@ class Game:
                                                 or button["name"] == "Research Super Cows":
                                             entity.research_tech(button["name"])
                                             serialize(playerOne.name, "research", button["name"])
+                                            if self.multi:
+                                                action = serialize(playerOne.name, "research", button["name"])
+                                                self.network.send_action(action)
                                         # else it is a building
                                         else:
                                             self.hud.selected_tile = button
@@ -419,7 +428,7 @@ class Game:
                                         action = serialize(player_name=this_villager.owner.name, action="attack",
                                                            triggering_unit=index, pos_x=pos_x, pos_y=pos_y)
                                         print(action)
-                                        #self.network.send_action(action)
+                                        self.network.send_action(action)
 
                                 # ONLY MOVEMENT
                                 if isinstance(this_villager, Villager) and self.map.collision_matrix[grid_pos[1]][grid_pos[0]] and \
@@ -453,6 +462,7 @@ class Game:
                                         action = serialize(player_name=this_villager.owner.name, action="move",
                                                            triggering_unit=index, pos_x=grid_pos[0], pos_y=grid_pos[1])
                                         print(action)
+                                        self.network.send_action(action)
 
                                 # we check if the tile we right click on is a ressource and if its on an adjacent tile of
                                 # the villager pos, and if the villager isnt moving if the tile next to him is a ressource
@@ -469,6 +479,7 @@ class Game:
                                         action = serialize(player_name=this_villager.owner.name, action="gather",
                                                            triggering_unit=index, pos_x=pos_x, pos_y=pos_y)
                                         print(action)
+                                        self.network.send_action(action)
 
 
 

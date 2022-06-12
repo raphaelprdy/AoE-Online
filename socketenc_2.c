@@ -325,7 +325,7 @@ void enregistrer_autres_c(int *pos, char *servaddr, char *myip){
             port = atoi(strtok(NULL, ","));
             printf("strtok: address: %s, port: %d\n", address, port);  
 
-            if(port != PORT || !(strncmp(address, servaddr, strlen(address)) || (strncmp(address, myip, strlen(myip))))){
+            if(port != PORT && !(strncmp(address, servaddr, strlen(address)) || (strncmp(address, myip, strlen(myip))))){
                 if(!isListFull(pos)){
                     printf("liste non pleine\n");
                     // si le client n'est pas dans la liste
