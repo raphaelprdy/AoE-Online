@@ -152,7 +152,17 @@ def deserialize(action: str, world=None) -> int:
 
             else:
                 return -1
+        
+        #permet à une unité de retourner au townhall pour se vider de ses ressources
+        elif words[1] == "townhall":
+            if words[2] and world:
+                unit = number_to_unit(int(words[2]), player)
+                unit.go_to_townhall()
+                return 0
 
+            else:
+                return -1
+        
         # la commande n'a pas été reconnue ou des mots clés manquent; PANIC
         else:
             return -1
